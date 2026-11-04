@@ -4,14 +4,26 @@
     @endphp
 
     <main class="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <header class="space-y-1">
-            <p class="text-sm font-medium text-secondary-700">Portal mahasiswa</p>
-            <h1 class="text-2xl font-semibold tracking-tight text-ink">Dashboard Mahasiswa</h1>
-            <p class="text-sm text-ink-muted">Selamat datang, {{ auth()->user()->name }}. Berikut ringkasan progres magang Anda.</p>
+        <header class="relative isolate overflow-hidden rounded-3xl bg-linear-to-br from-primary-700 via-primary-700 to-primary-800 px-5 py-7 text-white shadow-lg shadow-primary-800/10 sm:px-8 sm:py-9">
+            <div aria-hidden="true" class="absolute -right-12 -top-20 -z-10 size-64 rounded-full border-[36px] border-white/5"></div>
+            <div aria-hidden="true" class="absolute bottom-0 right-24 -z-10 size-24 rounded-full bg-brand-teal/20 blur-2xl"></div>
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <div class="max-w-2xl space-y-2">
+                    <p class="inline-flex items-center gap-2 text-sm font-semibold text-white/90"><span class="size-2 rounded-full bg-brand-teal"></span>Portal mahasiswa</p>
+                    <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Halo, {{ auth()->user()->name }}</h1>
+                    <p class="max-w-xl text-sm leading-6 text-white/85 sm:text-base">Pantau progres magang, laporan mingguan, dan jadwal bimbingan Anda dari satu tempat.</p>
+                </div>
+                @if ($currentPeriod)
+                    <a href="{{ $currentPeriod->weeklyReport ? route('laporan.show', $currentPeriod->weeklyReport) : route('mahasiswa.laporan.index') }}" class="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary-700 shadow-sm transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:self-auto">
+                        {{ $currentPeriod->weeklyReport ? 'Lihat laporan aktif' : 'Mulai laporan minggu ini' }}
+                        <flux:icon.arrow-right variant="outline" class="size-4" />
+                    </a>
+                @endif
+            </div>
         </header>
 
         <section aria-label="Ringkasan magang" class="grid gap-4 md:grid-cols-2">
-            <article class="rounded-xl border border-line bg-surface p-5 shadow-sm sm:p-6">
+            <article class="group rounded-2xl border border-line bg-surface p-5 shadow-sm shadow-primary-800/[0.03] transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
                 <div class="flex items-center gap-3">
                     <span aria-hidden="true" class="flex size-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700"><flux:icon.user-group variant="outline" class="size-5" /></span>
                     <h2 class="font-semibold text-ink">Dosen Pembimbing Aktif</h2>
@@ -24,7 +36,7 @@
                 @endif
             </article>
 
-            <article class="rounded-xl border border-line bg-surface p-5 shadow-sm sm:p-6">
+            <article class="group rounded-2xl border border-line bg-surface p-5 shadow-sm shadow-primary-800/[0.03] transition hover:-translate-y-0.5 hover:shadow-md sm:p-6">
                 <div class="flex items-center gap-3">
                     <span aria-hidden="true" class="flex size-10 items-center justify-center rounded-lg bg-primary-50 text-primary-700"><flux:icon.calendar-days variant="outline" class="size-5" /></span>
                     <h2 class="font-semibold text-ink">Periode Pelaporan Berjalan</h2>
@@ -47,7 +59,7 @@
         </section>
 
         <section class="grid gap-4 lg:grid-cols-2">
-            <article class="rounded-xl border border-line bg-surface shadow-sm">
+            <article class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
                 <header class="flex items-center justify-between gap-3 border-b border-line px-5 py-4 sm:px-6">
                     <div>
                         <h2 class="font-semibold text-ink">Laporan Perlu Direvisi</h2>
@@ -72,7 +84,7 @@
                 </div>
             </article>
 
-            <article class="rounded-xl border border-line bg-surface shadow-sm">
+            <article class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
                 <header class="flex items-center justify-between gap-3 border-b border-line px-5 py-4 sm:px-6">
                     <div>
                         <h2 class="font-semibold text-ink">Pembimbingan Mendatang</h2>
@@ -100,7 +112,7 @@
             </article>
         </section>
 
-        <section aria-labelledby="assessment-heading" class="rounded-xl border border-line bg-surface p-5 shadow-sm sm:p-6">
+        <section aria-labelledby="assessment-heading" class="rounded-2xl border border-line bg-linear-to-r from-surface to-primary-50/70 p-5 shadow-sm shadow-primary-800/[0.03] sm:p-6">
             <div class="flex items-start gap-3">
                 <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-success-bg text-success"><flux:icon.trophy variant="outline" class="size-5" /></span>
                 <div class="min-w-0 flex-1">

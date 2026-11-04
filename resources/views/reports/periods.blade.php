@@ -1,9 +1,9 @@
 <x-layouts::app.sidebar title="Laporan Mingguan">
     <flux:main>
-        <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <main class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
             <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div class="flex items-start gap-4">
-                    <div><h1 class="text-2xl font-semibold tracking-tight text-ink">Laporan mingguan</h1><p class="mt-1 max-w-2xl text-sm leading-6 text-ink-muted">Kirim laporan sesuai periode, pantau status pemeriksaan, dan lanjutkan revisi bila diperlukan.</p></div>
+                    <div><p class="text-sm font-semibold text-primary-700">Progres magang</p><h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Laporan mingguan</h1><p class="mt-2 max-w-2xl text-sm leading-6 text-ink-muted">Kirim laporan sesuai periode, pantau status pemeriksaan, dan lanjutkan revisi bila diperlukan.</p></div>
                 </div>
                 <p class="text-sm text-ink-muted">PDF atau DOCX · Maksimum 10 MB</p>
             </header>
@@ -22,8 +22,8 @@
                             ? ($report->review_status->value === 'revision_requested' || ($report->review_status->value === 'pending_review' && ! $latest?->review))
                             : $period->starts_on->isPast();
                     @endphp
-                    <article class="overflow-hidden rounded-lg border border-line bg-surface">
-                        <div class="flex flex-col gap-4 border-b border-line p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5">
+                    <article class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
+                        <div class="flex flex-col gap-4 border-b border-line bg-linear-to-r from-primary-50/80 to-surface p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5">
                             <div class="flex items-start gap-4">
                                 <div><h2 class="text-base font-semibold text-ink">Minggu ke-{{ $period->week_number }}</h2><p class="mt-1 text-sm text-ink-muted">{{ $period->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $period->ends_on->locale('id')->translatedFormat('d M Y') }}</p><p class="mt-1 text-sm text-ink-muted">Batas pengumpulan {{ $period->due_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB</p></div>
                             </div>
@@ -51,7 +51,7 @@
                             @endif
 
                             @if ($canUpload)
-                                <form method="POST" enctype="multipart/form-data" action="{{ route('mahasiswa.laporan.store', $period) }}" class="flex flex-col gap-4 rounded-lg border border-line bg-bg p-4">
+                                <form method="POST" enctype="multipart/form-data" action="{{ route('mahasiswa.laporan.store', $period) }}" class="flex flex-col gap-4 rounded-2xl border border-primary-100 bg-primary-50/50 p-4 sm:p-5">
                                     @csrf
                                     <div class="flex items-start gap-3"><span aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700"><flux:icon.cloud-arrow-up variant="outline" class="size-5" /></span><div><h3 class="font-semibold text-ink">{{ $report ? ($report->review_status->value === 'revision_requested' ? 'Unggah revisi laporan' : 'Perbarui berkas laporan') : 'Kirim laporan minggu ini' }}</h3><p class="mt-1 text-sm leading-6 text-ink-muted">Pilih dokumen PDF atau DOCX. Ukuran berkas maksimal 10 MB.</p></div></div>
                                     <div class="grid gap-4 md:grid-cols-2">
@@ -63,7 +63,7 @@
                                         </div>
                                         <div class="flex flex-col gap-2">
                                             <label for="note-{{ $period->id }}" class="text-sm font-medium text-ink">Catatan untuk dosen <span class="font-normal text-ink-muted">(opsional)</span></label>
-                                            <textarea id="note-{{ $period->id }}" name="student_note" rows="3" placeholder="Tambahkan konteks singkat tentang laporan atau revisi ini" class="w-full rounded-lg border border-line-input bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">{{ old('student_note') }}</textarea>
+                                            <textarea id="note-{{ $period->id }}" name="student_note" rows="3" placeholder="Tambahkan konteks singkat tentang laporan atau revisi ini" class="w-full rounded-lg border border-line-input bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">{{ old('student_note') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="flex flex-col-reverse gap-3 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">

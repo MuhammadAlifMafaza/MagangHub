@@ -1,9 +1,11 @@
-<main class="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-    <header class="space-y-1">
-        <h1 class="text-2xl font-semibold tracking-tight text-ink">Jadwal Pembimbingan</h1>
-        <p class="text-sm text-ink-muted">Lihat jadwal dosen pembimbing aktif dan kelola pemesanan Anda.</p>
+<main class="mx-auto w-full max-w-7xl space-y-7 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <header class="relative isolate overflow-hidden rounded-3xl border border-primary-100 bg-linear-to-br from-primary-50 via-surface to-surface p-5 sm:p-7">
+        <div aria-hidden="true" class="absolute -right-8 -top-10 -z-10 size-40 rounded-full bg-brand-teal/15 blur-2xl"></div>
+        <p class="text-sm font-semibold text-primary-700">Bimbingan akademik</p>
+        <h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Jadwal Pembimbingan</h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-ink-muted">Pilih waktu yang sesuai, lihat jadwal yang akan datang, dan kelola pemesanan bersama dosen pembimbing Anda.</p>
         @if ($lecturer)
-            <p class="pt-2 text-sm text-ink-muted">Pembimbing aktif: <span class="font-medium text-ink">{{ $lecturer->user->name }}</span>@if ($lecturer->department) · {{ $lecturer->department }}@endif</p>
+            <p class="mt-4 inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-primary-100 bg-white/80 px-3 py-2 text-sm text-ink-muted"><flux:icon.user-circle variant="outline" class="size-5 text-primary-700" />Pembimbing aktif: <span class="font-semibold text-ink">{{ $lecturer->user->name }}</span>@if ($lecturer->department) <span aria-hidden="true">·</span>{{ $lecturer->department }}@endif</p>
         @endif
     </header>
 
@@ -16,7 +18,7 @@
     @error('slot')<p role="alert" class="rounded-lg border border-danger/20 bg-danger-bg p-3 text-sm text-danger">{{ $message }}</p>@enderror
     @error('booking')<p role="alert" class="rounded-lg border border-danger/20 bg-danger-bg p-3 text-sm text-danger">{{ $message }}</p>@enderror
 
-    <section aria-labelledby="available-slots-heading" class="space-y-3">
+    <section aria-labelledby="available-slots-heading" class="space-y-4">
         <div>
             <h2 id="available-slots-heading" class="text-lg font-semibold text-ink">Jadwal tersedia</h2>
             <p class="mt-1 text-sm text-ink-muted">Pemesanan ditutup {{ config('magang.guidance.booking_cutoff_hours') }} jam sebelum jadwal.</p>
@@ -25,7 +27,7 @@
             @endif
         </div>
 
-        <div class="overflow-hidden rounded-lg border border-line bg-surface">
+        <div class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
             @if ($availableSlots->isEmpty())
                 <p class="p-5 text-sm text-ink-muted">Belum ada jadwal terbuka dari pembimbing aktif Anda.</p>
             @else
@@ -34,13 +36,13 @@
                     $isFull = $slot->booked_count >= $slot->capacity;
                     $bookingClosed = $slot->starts_at->lessThanOrEqualTo($bookingCutoff);
                 @endphp
-                <article wire:key="slot-{{ $slot->id }}" class="flex flex-col gap-4 border-b border-line p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <article wire:key="slot-{{ $slot->id }}" class="flex flex-col gap-4 border-b border-line p-4 transition-colors last:border-b-0 hover:bg-primary-50/40 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                     <div class="min-w-0">
                         <h3 class="font-medium text-ink">{{ $slot->starts_at->locale('id')->translatedFormat('l, d F Y') }}</h3>
                         <p class="mt-1 text-sm text-ink-muted">{{ $slot->starts_at->format('H:i') }}–{{ $slot->ends_at->format('H:i') }} WIB · {{ $slot->location ?: 'Lokasi belum ditentukan' }}</p>
                         <p class="mt-1 text-xs text-ink-muted">{{ $slot->booked_count }} dari {{ $slot->capacity }} tempat terisi</p>
                     </div>
-                    <div class="flex shrink-0 flex-col items-start gap-2 sm:items-end">
+                    <div class="flex shrink-0 flex-row flex-wrap items-center justify-between gap-3 sm:flex-col sm:items-end">
                         @if ($isFull)
                             <x-ui.status-badge label="Penuh" tone="neutral" />
                         @elseif ($bookingClosed)
@@ -65,7 +67,9 @@
     </section>
 
     @if ($bookingToConfirm)
-        @php($confirmationSlot = $availableSlots->firstWhere('id', $bookingToConfirm))
+        @php
+            $confirmationSlot = $availableSlots->firstWhere('id', $bookingToConfirm);
+        @endphp
         @if ($confirmationSlot)
             <section role="alertdialog" aria-modal="true" aria-labelledby="booking-confirmation-title" aria-describedby="booking-confirmation-description" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                 <div class="w-full max-w-md rounded-lg border border-line bg-surface p-5 shadow-lg sm:p-6">
@@ -86,12 +90,12 @@
         @endif
     @endif
 
-    <section aria-labelledby="booking-history-heading" class="space-y-3">
+    <section aria-labelledby="booking-history-heading" class="space-y-4">
         <div>
             <h2 id="booking-history-heading" class="text-lg font-semibold text-ink">Riwayat pemesanan</h2>
             <p class="mt-1 text-sm text-ink-muted">Jadwal dan status pemesanan sebelumnya.</p>
         </div>
-        <div class="overflow-hidden rounded-lg border border-line bg-surface">
+        <div class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
             @if ($bookings->isEmpty())
                 <p class="p-5 text-sm text-ink-muted">Belum ada riwayat pemesanan bimbingan.</p>
             @else
@@ -107,7 +111,7 @@
                         'neutral' => 'bg-neutral-bg text-neutral',
                     ];
                 @endphp
-                <article wire:key="booking-{{ $booking->id }}" class="flex flex-col gap-4 border-b border-line p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <article wire:key="booking-{{ $booking->id }}" class="flex flex-col gap-4 border-b border-line p-4 transition-colors last:border-b-0 hover:bg-primary-50/40 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                     <div class="min-w-0">
                         <h3 class="font-medium text-ink">{{ $booking->slot->starts_at->locale('id')->translatedFormat('l, d F Y') }}</h3>
                         <p class="mt-1 text-sm text-ink-muted">{{ $booking->slot->starts_at->format('H:i') }}–{{ $booking->slot->ends_at->format('H:i') }} WIB · {{ $booking->slot->lecturer->user->name }}</p>

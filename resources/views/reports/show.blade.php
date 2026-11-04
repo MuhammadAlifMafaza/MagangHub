@@ -1,10 +1,10 @@
 @if (request()->user()->role->value === 'student')
 <x-layouts::app.sidebar title="Detail Laporan">
 <flux:main>
-    <main class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-ink-muted"><a class="rounded underline decoration-line-input underline-offset-4 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('mahasiswa.laporan.index') }}">Laporan mingguan</a><flux:icon.chevron-right variant="mini" class="size-4" /><span aria-current="page" class="font-medium text-ink">Minggu ke-{{ $report->reportPeriod->week_number }}</span></nav>
 
-        <header class="flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <header class="flex flex-col gap-4 rounded-2xl border border-primary-100 bg-linear-to-r from-primary-50/80 to-surface p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
             <div><p class="text-sm text-ink-muted">Riwayat pengumpulan</p><h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink">Laporan minggu ke-{{ $report->reportPeriod->week_number }}</h1><p class="mt-1 text-sm text-ink-muted">{{ $report->reportPeriod->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $report->reportPeriod->ends_on->locale('id')->translatedFormat('d M Y') }}</p></div>
             <div class="flex items-center gap-2"><span class="text-sm text-ink-muted">Status pemeriksaan</span><x-ui.status-badge :label="$report->review_status->label()" :tone="$report->review_status->color()" /></div>
         </header>
@@ -13,7 +13,7 @@
             <p role="status" class="flex items-start gap-3 rounded-xl border border-warning/20 bg-warning-bg p-4 text-sm leading-6 text-warning"><flux:icon.exclamation-triangle variant="outline" class="mt-0.5 size-5 shrink-0" /><span><strong class="font-semibold">Revisi diperlukan.</strong> Baca umpan balik dosen pada versi terakhir, lalu unggah versi baru melalui daftar laporan.</span><a class="ml-auto inline-flex min-h-10 shrink-0 items-center gap-1 font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning" href="{{ route('mahasiswa.laporan.index') }}">Ke laporan <flux:icon.arrow-right variant="outline" class="size-4" /></a></p>
         @endif
 
-        <section aria-labelledby="history-heading" class="overflow-hidden rounded-lg border border-line bg-surface">
+        <section aria-labelledby="history-heading" class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
             <div class="border-b border-line px-4 py-4 sm:px-5"><h2 id="history-heading" class="font-semibold text-ink">Riwayat versi</h2><p class="mt-1 text-sm text-ink-muted">Dokumen dan umpan balik untuk laporan ini</p></div>
             <ol class="divide-y divide-line px-5 sm:px-6">
                 @foreach ($report->versions as $version)
@@ -36,7 +36,7 @@
             </ol>
         </section>
 
-        <section aria-labelledby="grade-heading" class="rounded-lg border border-line bg-surface p-4 sm:p-5">
+        <section aria-labelledby="grade-heading" class="rounded-2xl border border-line bg-linear-to-r from-surface to-primary-50/70 p-4 shadow-sm shadow-primary-800/[0.03] sm:p-5">
             <div class="flex items-start gap-4"><span aria-hidden="true" class="flex size-11 shrink-0 items-center justify-center rounded-xl {{ $report->assessment ? 'bg-success-bg text-success' : 'bg-neutral-bg text-neutral' }}"><flux:icon.trophy variant="outline" class="size-5" /></span><div class="min-w-0 flex-1"><h2 id="grade-heading" class="font-semibold text-ink">Hasil penilaian</h2>
                 @if ($report->assessment)
                     <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><p class="text-3xl font-semibold tabular-nums tracking-tight text-ink">{{ number_format((float) $report->assessment->score, 2, ',', '.') }}<span class="ml-1 text-base font-medium text-ink-muted">/ 100</span></p><p class="text-sm text-ink-muted">Dipublikasikan {{ $report->assessment->published_at?->locale('id')->translatedFormat('d M Y') }}</p></div>
