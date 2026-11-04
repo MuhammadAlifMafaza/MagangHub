@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="id">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-bg text-ink">
+    <body class="min-h-dvh bg-bg text-ink antialiased">
         <a href="#main-content" class="sr-only z-50 rounded-lg bg-surface px-4 py-3 text-primary-700 focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Lewati ke konten utama</a>
         <flux:sidebar sticky collapsible="mobile" class="min-h-dvh border-e border-line bg-surface">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate class="!text-ink" />
-                <flux:sidebar.collapse class="lg:hidden" />
+                <flux:sidebar.collapse aria-label="Tutup navigasi" class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav aria-label="Navigasi utama">
                 <div class="grid gap-1">
                     <p class="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">Menu utama</p>
-                    <a href="{{ route('dashboard') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700' => request()->routeIs('dashboard'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('dashboard')]) @if (request()->routeIs('dashboard')) aria-current="page" @endif wire:navigate>
+                    <a href="{{ route('dashboard') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('dashboard'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('dashboard')]) @if (request()->routeIs('dashboard')) aria-current="page" @endif wire:navigate>
                         <flux:icon.home variant="outline" class="size-5 shrink-0" />
                         <span>Dashboard</span>
                     </a>
                     @if (auth()->user()->role === \App\Enums\UserRole::Student)
-                        <a href="{{ route('guidance.student') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700' => request()->routeIs('guidance.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('guidance.*')]) @if (request()->routeIs('guidance.*')) aria-current="page" @endif wire:navigate>
+                        <a href="{{ route('guidance.student') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('guidance.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('guidance.*')]) @if (request()->routeIs('guidance.*')) aria-current="page" @endif wire:navigate>
                             <flux:icon.calendar-days variant="outline" class="size-5 shrink-0" />
                             <span>Jadwal Pembimbingan</span>
                         </a>
-                        <a href="{{ route('mahasiswa.laporan.index') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700' => request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! (request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show'))]) @if (request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show')) aria-current="page" @endif wire:navigate>
+                        <a href="{{ route('mahasiswa.laporan.index') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! (request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show'))]) @if (request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show')) aria-current="page" @endif wire:navigate>
                             <flux:icon.document-text variant="outline" class="size-5 shrink-0" />
                             <span>Laporan Mingguan</span>
                         </a>
@@ -34,7 +34,7 @@
             <flux:spacer />
 
             <flux:sidebar.nav aria-label="Pengaturan akun">
-                <a href="{{ route('profile.edit') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700' => request()->routeIs('profile.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('profile.*')]) @if (request()->routeIs('profile.*')) aria-current="page" @endif wire:navigate>
+                <a href="{{ route('profile.edit') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('profile.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('profile.*')]) @if (request()->routeIs('profile.*')) aria-current="page" @endif wire:navigate>
                     <flux:icon.user-circle variant="outline" class="size-5 shrink-0" />
                     <span>Profil</span>
                 </a>
@@ -44,8 +44,10 @@
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+        <flux:header class="bg-surface lg:hidden">
+            <flux:sidebar.toggle aria-label="Buka navigasi" class="lg:hidden" icon="bars-2" inset="left" />
+
+            <x-app-logo href="{{ route('dashboard') }}" wire:navigate class="ms-2" />
 
             <flux:spacer />
 
@@ -98,7 +100,9 @@
             </flux:dropdown>
         </flux:header>
 
-        <div id="main-content" tabindex="-1" class="min-h-svh">{{ $slot }}</div>
+        <flux:main id="main-content" tabindex="-1" class="min-h-dvh bg-bg text-ink">
+            {{ $slot }}
+        </flux:main>
 
         @persist('toast')
             <flux:toast.group>

@@ -22,4 +22,23 @@ class SubmitReportRequest extends FormRequest
             'student_note' => ['nullable', 'string', 'max:5000'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'file.required' => 'Berkas laporan wajib diunggah.',
+            'file.file' => 'Berkas laporan yang dipilih tidak valid.',
+            'file.extensions' => 'Berkas laporan harus berformat PDF atau DOCX.',
+            'file.max' => 'Ukuran berkas laporan tidak boleh lebih dari :max kilobita.',
+            'student_note.max' => 'Catatan untuk dosen tidak boleh lebih dari :max karakter.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'file' => 'berkas laporan',
+            'student_note' => 'catatan untuk dosen',
+        ];
+    }
 }

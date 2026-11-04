@@ -1,6 +1,5 @@
 @if (request()->user()->role->value === 'student')
 <x-layouts::app.sidebar title="Detail Laporan">
-<flux:main>
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-ink-muted"><a class="rounded underline decoration-line-input underline-offset-4 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('mahasiswa.laporan.index') }}">Laporan mingguan</a><flux:icon.chevron-right variant="mini" class="size-4" /><span aria-current="page" class="font-medium text-ink">Minggu ke-{{ $report->reportPeriod->week_number }}</span></nav>
 
@@ -21,7 +20,7 @@
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div class="flex min-w-0 items-start gap-3">
                                 <span aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg {{ $loop->last ? 'bg-primary-50 text-primary-700' : 'bg-neutral-bg text-neutral' }}"><flux:icon.document variant="outline" class="size-5" /></span>
-                                <div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h3 class="font-semibold text-ink">Versi {{ $version->version_number }}</h3>@if ($loop->last)<span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700">Terbaru</span>@endif @if ($version->is_late)<x-ui.status-badge label="Terlambat" tone="danger" />@endif</div><p class="mt-1 break-all text-sm font-medium text-ink">{{ $version->original_name }}</p><p class="mt-1 text-xs text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB <span aria-hidden="true">·</span> {{ number_format($version->size_bytes / 1024, 0) }} KB</p>@if ($version->student_note)<p class="mt-3 whitespace-pre-line text-sm leading-6 text-ink-muted"><span class="font-medium text-ink">Catatan Anda:</span> {{ $version->student_note }}</p>@endif</div>
+                                <div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h3 class="font-semibold text-ink">Versi {{ $version->version_number }}</h3>@if ($loop->last)<span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700">Terbaru</span>@endif @if ($version->is_late)<x-ui.status-badge label="Terlambat" tone="danger" />@endif</div><p class="mt-1 break-all text-sm font-medium text-ink">{{ $version->original_name }}</p><p class="mt-1 text-xs text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB <span aria-hidden="true">·</span> @if ($version->size_bytes < 1024) {{ number_format($version->size_bytes) }} byte @else {{ number_format($version->size_bytes / 1024, $version->size_bytes < 10240 ? 1 : 0, ',', '.') }} KB @endif</p>@if ($version->student_note)<p class="mt-3 whitespace-pre-line text-sm leading-6 text-ink-muted"><span class="font-medium text-ink">Catatan Anda:</span> {{ $version->student_note }}</p>@endif</div>
                             </div>
                             <a href="{{ route('laporan.versi.download', $version) }}" class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
                         </div>
@@ -47,7 +46,6 @@
             </div></div>
         </section>
     </main>
-</flux:main>
 </x-layouts::app.sidebar>
 @else
 @if (request()->user()->role->value === 'lecturer')

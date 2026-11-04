@@ -37,7 +37,7 @@ class ReportController
 
     public function submit(SubmitReportRequest $request, ReportPeriod $period, SubmitReportVersion $action): RedirectResponse
     {
-        Gate::authorize('submit', $period);
+        Gate::authorize('submit', [WeeklyReport::class, $period]);
         $action->handle($request->user()->student, $period, $request->file('file'), $request->validated('student_note'));
 
         return back()->with('status', 'Laporan berhasil dikirim.');

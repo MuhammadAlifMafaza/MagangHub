@@ -56,6 +56,24 @@
 
 @layer theme {
     .dark {
+        --color-primary-50: #1b2a3d;
+        --color-primary-100: #293d56;
+        --color-bg: #0f1724;
+        --color-surface: #182434;
+        --color-ink: #e7edf5;
+        --color-ink-muted: #a9b7c9;
+        --color-line: #344256;
+        --color-line-input: #61718a;
+        --color-success: #4ade80;
+        --color-success-bg: #153824;
+        --color-warning: #fbbf24;
+        --color-warning-bg: #3b2e12;
+        --color-danger: #f87171;
+        --color-danger-bg: #3d2025;
+        --color-info: #38bdf8;
+        --color-info-bg: #142f40;
+        --color-neutral: #cbd5e1;
+        --color-neutral-bg: #293548;
         --color-accent: var(--color-white);
         --color-accent-content: var(--color-white);
         --color-accent-foreground: var(--color-neutral-800);

@@ -18,6 +18,8 @@ class StudentGuidance extends Component
 {
     public ?int $bookingToConfirm = null;
 
+    public bool $showBookingConfirmation = false;
+
     public ?int $bookingToCancel = null;
 
     public string $cancelReason = '';
@@ -25,6 +27,13 @@ class StudentGuidance extends Component
     public function confirmBooking(int $slotId): void
     {
         $this->bookingToConfirm = $slotId;
+        $this->showBookingConfirmation = true;
+    }
+
+    public function closeBookingConfirmation(): void
+    {
+        $this->bookingToConfirm = null;
+        $this->showBookingConfirmation = false;
     }
 
     public function book(BookGuidanceSlot $action): void
@@ -43,6 +52,7 @@ class StudentGuidance extends Component
         try {
             $action->handle($student, $slot);
             $this->bookingToConfirm = null;
+            $this->showBookingConfirmation = false;
             session()->flash('guidance-success', 'Jadwal bimbingan berhasil dipesan.');
         } catch (ValidationException $exception) {
             $this->addError('slot', $exception->errors()['slot'][0] ?? 'Jadwal tidak dapat dipesan.');

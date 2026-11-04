@@ -14,7 +14,7 @@ use Laravel\Passkeys\Actions\DeletePasskey;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
-new #[Title('Security settings')] class extends Component {
+new #[Title('Pengaturan keamanan')] class extends Component {
     use PasswordValidationRules;
 
     public string $current_password = '';
@@ -102,7 +102,7 @@ new #[Title('Security settings')] class extends Component {
             return;
         }
 
-        Flux::toast(variant: 'success', text: __('Password updated.'));
+        Flux::toast(variant: 'success', text: 'Kata sandi berhasil diperbarui.');
     }
 
     /**
@@ -118,8 +118,8 @@ new #[Title('Security settings')] class extends Component {
                 'id' => $passkey->id,
                 'name' => $passkey->name,
                 'authenticator' => $passkey->authenticator,
-                'created_at_diff' => $passkey->created_at->diffForHumans(),
-                'last_used_at_diff' => $passkey->last_used_at?->diffForHumans(),
+                'created_at_diff' => $passkey->created_at->locale('id')->diffForHumans(),
+                'last_used_at_diff' => $passkey->last_used_at?->locale('id')->diffForHumans(),
             ])
             ->toArray();
     }
@@ -186,13 +186,13 @@ new #[Title('Security settings')] class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <flux:heading level="2" class="sr-only">{{ __('Security settings') }}</flux:heading>
+        <flux:heading level="2" class="sr-only">Pengaturan keamanan</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
+    <x-pages::settings.layout heading="Ubah kata sandi" subheading="Gunakan kata sandi yang kuat dan unik untuk menjaga keamanan akun.">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             <flux:input
                 wire:model="current_password"
-                :label="__('Current password')"
+                label="Kata sandi saat ini"
                 type="password"
                 required
                 autocomplete="current-password"
@@ -200,7 +200,7 @@ new #[Title('Security settings')] class extends Component {
             />
             <flux:input
                 wire:model="password"
-                :label="__('New password')"
+                label="Kata sandi baru"
                 type="password"
                 required
                 autocomplete="new-password"
@@ -209,7 +209,7 @@ new #[Title('Security settings')] class extends Component {
             />
             <flux:input
                 wire:model="password_confirmation"
-                :label="__('Confirm password')"
+                label="Konfirmasi kata sandi"
                 type="password"
                 required
                 autocomplete="new-password"
@@ -219,21 +219,21 @@ new #[Title('Security settings')] class extends Component {
 
             <div class="flex items-center gap-4">
                 <flux:button variant="primary" type="submit" data-test="update-password-button">
-                    {{ __('Save') }}
+                    Simpan perubahan
                 </flux:button>
             </div>
         </form>
 
         @if ($canManageTwoFactor)
             <section class="mt-12">
-                <flux:heading>{{ __('Two-factor authentication') }}</flux:heading>
-                <flux:subheading>{{ __('Manage your two-factor authentication settings') }}</flux:subheading>
+                <flux:heading>Autentikasi dua faktor</flux:heading>
+                <flux:subheading>Kelola verifikasi tambahan saat Anda masuk.</flux:subheading>
 
                 <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     @if ($twoFactorEnabled)
                         <div class="space-y-4">
                             <flux:text>
-                                {{ __('You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.') }}
+                                Anda akan diminta memasukkan kode keamanan saat masuk. Kode ini tersedia di aplikasi autentikator pada ponsel Anda.
                             </flux:text>
 
                             <div class="flex justify-start">
@@ -241,7 +241,7 @@ new #[Title('Security settings')] class extends Component {
                                     variant="danger"
                                     wire:click="disable"
                                 >
-                                    {{ __('Disable 2FA') }}
+                                    Nonaktifkan autentikasi dua faktor
                                 </flux:button>
                             </div>
 
@@ -250,7 +250,7 @@ new #[Title('Security settings')] class extends Component {
                     @else
                         <div class="space-y-4">
                             <flux:text variant="subtle">
-                                {{ __('When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.') }}
+                                Setelah diaktifkan, Anda akan diminta memasukkan kode keamanan dari aplikasi autentikator setiap kali masuk.
                             </flux:text>
 
                             <flux:modal.trigger name="two-factor-setup-modal">
@@ -258,7 +258,7 @@ new #[Title('Security settings')] class extends Component {
                                     variant="primary"
                                     wire:click="$dispatch('start-two-factor-setup')"
                                 >
-                                    {{ __('Enable 2FA') }}
+                                    Aktifkan autentikasi dua faktor
                                 </flux:button>
                             </flux:modal.trigger>
 
@@ -271,8 +271,8 @@ new #[Title('Security settings')] class extends Component {
 
         @if ($canManagePasskeys)
             <section class="mt-12">
-                <flux:heading>{{ __('Passkeys') }}</flux:heading>
-                <flux:subheading>{{ __('Manage your passkeys for passwordless sign-in') }}</flux:subheading>
+                <flux:heading>Kunci sandi</flux:heading>
+                <flux:subheading>Kelola kunci sandi untuk masuk tanpa kata sandi.</flux:subheading>
 
                 <div class="mt-6 flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     <div class="border rounded-lg border-zinc-200 dark:border-zinc-700 overflow-hidden">
@@ -290,10 +290,10 @@ new #[Title('Security settings')] class extends Component {
                                             @endif
                                         </div>
                                         <p class="text-zinc-500 dark:text-zinc-400 text-xs">
-                                            {{ __('Added :time', ['time' => $passkey['created_at_diff']]) }}
+                                            Ditambahkan {{ $passkey['created_at_diff'] }}
                                             @if ($passkey['last_used_at_diff'])
                                                 <span class="opacity-50 mx-1">/</span>
-                                                {{ __('Last used :time', ['time' => $passkey['last_used_at_diff']]) }}
+                                                <span>Terakhir digunakan {{ $passkey['last_used_at_diff'] }}</span>
                                             @endif
                                         </p>
                                     </div>
@@ -313,8 +313,8 @@ new #[Title('Security settings')] class extends Component {
                                 <div class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800">
                                     <flux:icon.key class="size-7 text-zinc-400 dark:text-zinc-500" />
                                 </div>
-                                <p class="font-medium">{{ __('No passkeys yet') }}</p>
-                                <flux:text class="mt-1">{{ __('Add a passkey to sign in without a password') }}</flux:text>
+                                <p class="font-medium">Belum ada kunci sandi</p>
+                                <flux:text class="mt-1">Tambahkan kunci sandi agar dapat masuk tanpa kata sandi.</flux:text>
                             </div>
                         @endforelse
                     </div>
@@ -333,9 +333,9 @@ new #[Title('Security settings')] class extends Component {
     >
         <div class="space-y-6">
             <div class="space-y-2">
-                <flux:heading size="lg">{{ __('Remove passkey') }}</flux:heading>
+                <flux:heading size="lg">Hapus kunci sandi</flux:heading>
                 <flux:text>
-                    {{ __('Are you sure you want to remove the passkey ":name"? You will no longer be able to use it to sign in.', ['name' => $deletingPasskeyName]) }}
+                    Yakin ingin menghapus kunci sandi “{{ $deletingPasskeyName }}”? Kunci ini tidak dapat digunakan lagi untuk masuk.
                 </flux:text>
             </div>
 
@@ -344,13 +344,13 @@ new #[Title('Security settings')] class extends Component {
                     variant="outline"
                     wire:click="closeDeleteModal"
                 >
-                    {{ __('Cancel') }}
+                    Kembali
                 </flux:button>
                 <flux:button
                     variant="danger"
                     wire:click="deletePasskey"
                 >
-                    {{ __('Remove passkey') }}
+                    Hapus kunci sandi
                 </flux:button>
             </div>
         </div>

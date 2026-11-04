@@ -66,7 +66,7 @@ class ReportReviewResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('week_number')->label('Minggu')->options(fn (): array => WeeklyReport::query()
-                    ->whereKey(self::getEloquentQuery()->select('weekly_reports.id'))
+                    ->whereIn('weekly_reports.id', self::getEloquentQuery()->select('weekly_reports.id'))
                     ->join('report_periods', 'weekly_reports.report_period_id', '=', 'report_periods.id')
                     ->distinct()->orderBy('week_number')->pluck('week_number', 'week_number')->all())
                     ->query(fn (Builder $query, array $data): Builder => filled($data['value'] ?? null)

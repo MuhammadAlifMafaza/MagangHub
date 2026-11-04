@@ -5,7 +5,7 @@
         <h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Jadwal Pembimbingan</h1>
         <p class="mt-2 max-w-2xl text-sm leading-6 text-ink-muted">Pilih waktu yang sesuai, lihat jadwal yang akan datang, dan kelola pemesanan bersama dosen pembimbing Anda.</p>
         @if ($lecturer)
-            <p class="mt-4 inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-primary-100 bg-white/80 px-3 py-2 text-sm text-ink-muted"><flux:icon.user-circle variant="outline" class="size-5 text-primary-700" />Pembimbing aktif: <span class="font-semibold text-ink">{{ $lecturer->user->name }}</span>@if ($lecturer->department) <span aria-hidden="true">·</span>{{ $lecturer->department }}@endif</p>
+            <p class="mt-4 inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-primary-100 bg-surface/90 px-3 py-2 text-sm text-ink-muted"><flux:icon.user-circle variant="outline" class="size-5 text-primary-700" />Pembimbing aktif: <span class="font-semibold text-ink">{{ $lecturer->user->name }}</span>@if ($lecturer->department) <span aria-hidden="true">·</span>{{ $lecturer->department }}@endif</p>
         @endif
     </header>
 
@@ -71,22 +71,27 @@
             $confirmationSlot = $availableSlots->firstWhere('id', $bookingToConfirm);
         @endphp
         @if ($confirmationSlot)
-            <section role="alertdialog" aria-modal="true" aria-labelledby="booking-confirmation-title" aria-describedby="booking-confirmation-description" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <div class="w-full max-w-md rounded-lg border border-line bg-surface p-5 shadow-lg sm:p-6">
-                    <h2 id="booking-confirmation-title" class="text-lg font-semibold text-ink">Konfirmasi pemesanan</h2>
+            <flux:modal name="booking-confirmation" wire:model.self="showBookingConfirmation" wire:close="closeBookingConfirmation" class="md:w-lg">
+                <div class="space-y-5">
+                    <div>
+                        <flux:heading id="booking-confirmation-title" size="lg">Konfirmasi pemesanan</flux:heading>
+                        <flux:text id="booking-confirmation-description" class="mt-2">Periksa kembali jadwal sebelum mengonfirmasi.</flux:text>
+                    </div>
                     <p class="mt-3 font-medium text-ink">{{ $confirmationSlot->lecturer->user->name }}</p>
                     <p class="mt-1 text-sm text-ink-muted">{{ $confirmationSlot->starts_at->locale('id')->translatedFormat('l, d F Y') }} · {{ $confirmationSlot->starts_at->format('H:i') }}–{{ $confirmationSlot->ends_at->format('H:i') }} WIB</p>
                     <p class="mt-1 text-sm text-ink-muted">{{ $confirmationSlot->location ?: 'Lokasi belum ditentukan' }}</p>
-                    <p id="booking-confirmation-description" class="mt-4 text-sm leading-6 text-ink-muted">Pemesanan dapat dibatalkan paling lambat {{ config('magang.guidance.cancellation_cutoff_hours') }} jam sebelum jadwal.</p>
-                    <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                        <button type="button" wire:click="$set('bookingToConfirm', null)" class="inline-flex min-h-10 items-center justify-center rounded-md border border-line-input bg-surface px-4 py-2 text-sm font-medium text-ink hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Kembali</button>
-                        <button type="button" wire:click="book" wire:loading.attr="disabled" wire:target="book" class="inline-flex min-h-10 items-center justify-center rounded-md bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 disabled:cursor-wait disabled:opacity-60">
+                    <flux:text class="leading-6">Pemesanan dapat dibatalkan paling lambat {{ config('magang.guidance.cancellation_cutoff_hours') }} jam sebelum jadwal.</flux:text>
+                    <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                        <flux:modal.close>
+                            <flux:button variant="outline">Kembali</flux:button>
+                        </flux:modal.close>
+                        <flux:button variant="primary" wire:click="book" wire:loading.attr="disabled" wire:target="book">
                             <span wire:loading.remove wire:target="book">Konfirmasi pemesanan</span>
                             <span wire:loading wire:target="book">Memproses…</span>
-                        </button>
+                        </flux:button>
                     </div>
                 </div>
-            </section>
+            </flux:modal>
         @endif
     @endif
 
