@@ -7,6 +7,7 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\AuthenticatedLoginResponse;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -43,7 +44,26 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::authenticateUsing(function (Request $request): ?User {
-            $user = User::query()->where('email', $request->input('email'))->first();
+            $identifier = $request->input('email');
+
+            if (! is_string($identifier) || trim($identifier) === '') {
+                return null;
+            }
+
+            $identifier = Str::lower(trim($identifier));
+            $matchingUsers = User::query()
+                ->where(fn (Builder $query): Builder => $query
+                    ->where('email', $identifier)
+                    ->orWhereHas('student', fn (Builder $studentQuery): Builder => $studentQuery->where('nim', $identifier))
+                    ->orWhereHas('lecturer', fn (Builder $lecturerQuery): Builder => $lecturerQuery->where('nidn', $identifier)))
+                ->limit(2)
+                ->get();
+
+            if ($matchingUsers->count() !== 1) {
+                return null;
+            }
+
+            $user = $matchingUsers->first();
 
             if ($user !== null && $user->is_active && Hash::check($request->input('password', ''), $user->password)) {
                 return $user;

@@ -1,6 +1,6 @@
 <x-layouts::auth title="Lupa Kata Sandi">
     <div class="flex flex-col gap-6">
-        <x-auth-header title="Lupa kata sandi?" description="Masukkan alamat email akun Anda untuk menerima tautan pengaturan ulang kata sandi." />
+        <x-auth-header title="Lupa kata sandi?" description="Masukkan alamat email yang terdaftar untuk menerima tautan pengaturan ulang kata sandi." />
 
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')" />

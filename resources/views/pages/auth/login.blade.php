@@ -8,22 +8,22 @@
         <x-passkey-verify
             label="Masuk dengan passkey"
             loading-label="Memverifikasi…"
-            separator="Atau lanjutkan dengan email"
+            separator="Atau lanjutkan dengan email atau NIM/NIDN"
         />
 
         <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-6">
             @csrf
 
-            <!-- Email Address -->
+            <!-- Email or academic identifier -->
             <flux:input
                 name="email"
-                label="Alamat email"
+                label="Email, NIM, atau NIDN"
                 :value="old('email')"
-                type="email"
+                type="text"
                 required
                 autofocus
-                autocomplete="email"
-                placeholder="email@example.com"
+                autocomplete="username"
+                placeholder="Email, NIM, atau NIDN"
             />
 
             <!-- Password -->
