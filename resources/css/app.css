@@ -9,7 +9,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: Inter, ui-sans-serif, system-ui, sans-serif, 'Segoe UI', Roboto, Arial, sans-serif;
+
+    --color-primary-50: #edf1f7;
+    --color-primary-700: #1c3155;
+    --color-primary-800: #14253f;
+    --color-brand-teal: #78c8bc;
+    --color-brand-wordmark: #63bfb2;
+    --color-secondary-700: #0f766e;
+    --color-accent-700: #b45309;
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-ink: #0f172a;
+    --color-ink-muted: #475569;
+    --color-line: #e2e8f0;
+    --color-line-input: #64748b;
+    --color-success: #15803d;
+    --color-success-bg: #dcfce7;
+    --color-warning: #b45309;
+    --color-warning-bg: #fef3c7;
+    --color-danger: #b91c1c;
+    --color-danger-bg: #fee2e2;
+    --color-info: #0369a1;
+    --color-info-bg: #e0f2fe;
+    --color-neutral: #334155;
+    --color-neutral-bg: #f1f5f9;
 
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
@@ -23,8 +47,8 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
+    --color-accent: var(--color-primary-700);
+    --color-accent-content: var(--color-primary-800);
     --color-accent-foreground: var(--color-white);
 }
 

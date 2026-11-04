@@ -1,6 +1,7 @@
 <?php
 
 use App\Concerns\PasswordValidationRules;
+use App\Enums\UserRole;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -79,11 +80,27 @@ new #[Title('Security settings')] class extends Component {
             throw $e;
         }
 
-        Auth::user()->update([
+        $user = Auth::user();
+        $wasRequiredToChangePassword = $user->must_change_password;
+
+        $user->forceFill([
             'password' => $validated['password'],
-        ]);
+            'must_change_password' => false,
+        ])->save();
 
         $this->reset('current_password', 'password', 'password_confirmation');
+
+        if ($wasRequiredToChangePassword) {
+            $destination = match ($user->role) {
+                UserRole::Admin => '/admin',
+                UserRole::Lecturer => '/dosen',
+                UserRole::Student => route('dashboard', absolute: false),
+            };
+
+            $this->redirect($destination);
+
+            return;
+        }
 
         Flux::toast(variant: 'success', text: __('Password updated.'));
     }

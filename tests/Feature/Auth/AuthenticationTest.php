@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Laravel\Fortify\Features;
 
@@ -24,6 +25,21 @@ test('users can authenticate using the login screen', function () {
     $this->assertAuthenticated();
 });
 
+test('staff login redirects to the correct Filament panel', function (UserRole $role, string $destination) {
+    $user = User::factory()->create(['role' => $role]);
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertSessionHasNoErrors()
+        ->assertRedirect($destination);
+
+    $this->assertAuthenticatedAs($user);
+})->with([
+    'admin' => [UserRole::Admin, '/admin'],
+    'lecturer' => [UserRole::Lecturer, '/dosen'],
+]);
+
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 
@@ -33,6 +49,17 @@ test('users can not authenticate with invalid password', function () {
     ]);
 
     $response->assertSessionHasErrorsIn('email');
+
+    $this->assertGuest();
+});
+
+test('inactive accounts cannot authenticate', function () {
+    $user = User::factory()->create(['is_active' => false]);
+
+    $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertSessionHasErrorsIn('email');
 
     $this->assertGuest();
 });

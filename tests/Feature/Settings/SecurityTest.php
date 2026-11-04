@@ -96,6 +96,30 @@ test('password can be updated', function () {
     expect(Hash::check('new-password', $user->refresh()->password))->toBeTrue();
 });
 
+test('students required to change their password cannot access the portal until the password is changed', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('temporary-password'),
+        'must_change_password' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['auth.password_confirmed_at' => time()])
+        ->get(route('dashboard'))
+        ->assertRedirect(route('security.edit'));
+
+    Livewire::test('pages::settings.security')
+        ->set('current_password', 'temporary-password')
+        ->set('password', 'permanent-password')
+        ->set('password_confirmation', 'permanent-password')
+        ->call('updatePassword')
+        ->assertHasNoErrors();
+
+    expect($user->fresh()->must_change_password)->toBeFalse()
+        ->and(Hash::check('permanent-password', $user->fresh()->password))->toBeTrue();
+
+    $this->get(route('dashboard'))->assertOk();
+});
+
 test('correct password must be provided to update password', function () {
     $user = User::factory()->create([
         'password' => Hash::make('password'),

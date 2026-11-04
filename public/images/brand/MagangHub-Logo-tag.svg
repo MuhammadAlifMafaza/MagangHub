@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="480" viewBox="0 0 1600 480" role="img" aria-label="MagangHub logo">
+  <title>MagangHub</title>
+  <g transform="translate(24 16) scale(.355) translate(-195 -410)">
+    <g fill="#1c3155">
+      <rect x="208" y="432" width="1631" height="117" rx="58.5"/>
+      <path d="M262 522h55v575h-55z"/>
+      <circle cx="290" cy="1127" r="47"/>
+      <path d="M269 1152 226 1329q-3 26 16 26h96q19 0 15-26l-43-177z"/>
+      <path d="M477 544H947q-2 6 7 8l650 38q52 3 52 59v433q-55 4-108 32H481q-31 0-31-30 0-24 27-30z"/>
+      <rect x="1519" y="664" width="54" height="376" rx="27" fill="#fff"/>
+      <rect x="495" y="1302" width="1134" height="67" rx="32"/>
+      <path d="M481 1556h1056c125 0 225-99 225-222s-100-219-225-219h-56v-60h56c158 0 285 123 285 279s-127 282-285 282H481q-31 0-31-30t31-30z"/>
+    </g>
+    <g fill="#78c8bc">
+      <rect x="495" y="1172" width="1134" height="68" rx="30"/>
+      <rect x="495" y="1431" width="1134" height="68" rx="30"/>
+    </g>
+  </g>
+  <text x="650" y="286" fill="#1c3155" font-family="DejaVu Sans, sans-serif" font-size="137" font-weight="bold" letter-spacing="-7">Magang<tspan fill="#63bfb2">Hub</tspan></text>
+</svg>

@@ -1,32 +1,37 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <body class="min-h-screen bg-bg text-ink">
+        <a href="#main-content" class="sr-only z-50 rounded-lg bg-surface px-4 py-3 text-primary-700 focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Lewati ke konten utama</a>
+        <flux:sidebar sticky collapsible="mobile" class="border-e border-line bg-surface">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group heading="Menu utama" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
+                        Dashboard
                     </flux:sidebar.item>
+                    @if (auth()->user()->role === \App\Enums\UserRole::Student)
+                        <flux:sidebar.item icon="calendar-days" :href="route('guidance.student')" :current="request()->routeIs('guidance.*')" wire:navigate>
+                            Jadwal Pembimbingan
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="document-text" :href="route('mahasiswa.laporan.index')" :current="request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show')" wire:navigate>
+                            Laporan Mingguan
+                        </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
 
             <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
+                <flux:sidebar.item icon="user-circle" :href="route('profile.edit')" :current="request()->routeIs('profile.*')" wire:navigate>
+                    Profil
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
@@ -66,7 +71,7 @@
 
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                            {{ __('Settings') }}
+                            Profil
                         </flux:menu.item>
                     </flux:menu.radio.group>
 
@@ -81,14 +86,14 @@
                             class="w-full cursor-pointer"
                             data-test="logout-button"
                         >
-                            {{ __('Log out') }}
+                            Keluar
                         </flux:menu.item>
                     </form>
                 </flux:menu>
             </flux:dropdown>
         </flux:header>
 
-        {{ $slot }}
+        <div id="main-content" tabindex="-1" class="min-h-svh">{{ $slot }}</div>
 
         @persist('toast')
             <flux:toast.group>
