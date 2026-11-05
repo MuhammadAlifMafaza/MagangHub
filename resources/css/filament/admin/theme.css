@@ -1,0 +1,25 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+@layer components {
+    .fi-simple-page {
+        width: 100%;
+    }
+
+    .fi-simple-page-content {
+        width: 100%;
+        max-width: 68rem;
+    }
+
+    .staff-login-brand {
+        background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
+    }
+
+    @media (max-width: 1023px) {
+        .fi-simple-page-content {
+            max-width: 34rem;
+        }
+    }
+}

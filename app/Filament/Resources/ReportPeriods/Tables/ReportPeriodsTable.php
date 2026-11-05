@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\ReportPeriods\Tables;
 
+use App\Models\ReportPeriod;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ReportPeriodsTable
@@ -20,7 +22,13 @@ class ReportPeriodsTable
                 TextColumn::make('due_at')->label('Batas pengumpulan')->dateTime('d M Y, H:i')->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('week_number')->label('Minggu')->options(fn (): array => ReportPeriod::query()
+                    ->select('week_number')
+                    ->distinct()
+                    ->orderBy('week_number')
+                    ->pluck('week_number', 'week_number')
+                    ->all())
+                    ->searchable(),
             ])
             ->recordActions([
                 EditAction::make(),

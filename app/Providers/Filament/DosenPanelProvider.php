@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\StaffLogin;
 use App\Filament\Dosen\Widgets\LecturerGuidanceStats;
 use App\Filament\Dosen\Widgets\PendingLecturerReports;
 use App\Http\Middleware\RequirePasswordChange;
@@ -14,7 +15,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -30,7 +30,11 @@ class DosenPanelProvider extends PanelProvider
             ->id('dosen')
             ->path('dosen')
             ->brandName('MagangHub')
-            ->login()
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))
+            ->brandLogoHeight('2.5rem')
+            ->login(StaffLogin::class)
+            ->strictAuthorization()
             ->colors([
                 'primary' => Color::hex('#1C3155'),
                 'success' => Color::hex('#15803D'),
@@ -49,7 +53,6 @@ class DosenPanelProvider extends PanelProvider
                 AccountWidget::class,
                 LecturerGuidanceStats::class,
                 PendingLecturerReports::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

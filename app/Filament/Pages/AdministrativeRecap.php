@@ -55,8 +55,16 @@ class AdministrativeRecap extends Page
         $filteredReportIds = $this->filteredWeeklyReports()->select('weekly_reports.id');
 
         return [
-            'students' => Student::query()->with('user')->orderBy('id')->get(),
-            'lecturers' => Lecturer::query()->with('user')->orderBy('id')->get(),
+            'students' => Student::query()
+                ->select(['id', 'user_id', 'nim'])
+                ->with('user:id,name')
+                ->orderBy('id')
+                ->get(),
+            'lecturers' => Lecturer::query()
+                ->select(['id', 'user_id'])
+                ->with('user:id,name')
+                ->orderBy('id')
+                ->get(),
             'weeks' => ReportPeriod::query()->select('week_number')->distinct()->orderBy('week_number')->pluck('week_number'),
             'periods' => $filteredPeriods->paginate(15),
             'guidanceCounts' => $this->guidanceCounts(),

@@ -8,6 +8,7 @@ use App\Models\SupervisorAssignment;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class SupervisorAssignmentsTable
@@ -23,7 +24,10 @@ class SupervisorAssignmentsTable
                 TextColumn::make('assigned_at')->label('Ditugaskan pada')->dateTime('d M Y, H:i')->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')->label('Status')->options([
+                    SupervisorAssignmentStatus::Active->value => 'Aktif',
+                    SupervisorAssignmentStatus::Ended->value => 'Berakhir',
+                ]),
             ])
             ->recordActions([
                 Action::make('endAssignment')

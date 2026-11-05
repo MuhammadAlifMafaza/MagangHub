@@ -36,7 +36,7 @@ class UserForm
         } elseif ($record->role === UserRole::Lecturer) {
             $schema = [
                 ...$schema,
-                TextInput::make('nidn')->label('NIDN')->maxLength(20)
+                TextInput::make('nidn')->label('NIDN')->required()->maxLength(20)
                     ->rules([Rule::unique('lecturers', 'nidn')->ignore($record->lecturer?->id)]),
                 TextInput::make('department')->label('Departemen')->maxLength(100),
                 TextInput::make('phone')->label('Nomor telepon')->tel()->maxLength(30),
@@ -74,10 +74,10 @@ class UserForm
                     ])
                     ->live()
                     ->required(),
-                TextInput::make('nim')->label('NIM')->required()->maxLength(20)->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
+                TextInput::make('nim')->label('NIM')->required()->maxLength(20)->unique('students', 'nim')->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
                 TextInput::make('study_program')->label('Program studi')->required()->maxLength(100)->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
                 TextInput::make('cohort_year')->label('Angkatan')->numeric()->minValue(1900)->maxValue(2100)->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
-                TextInput::make('nidn')->label('NIDN')->maxLength(20)->visible(fn (Get $get): bool => $get('role') === UserRole::Lecturer->value),
+                TextInput::make('nidn')->label('NIDN')->required()->maxLength(20)->unique('lecturers', 'nidn')->visible(fn (Get $get): bool => $get('role') === UserRole::Lecturer->value),
                 TextInput::make('department')->label('Departemen')->maxLength(100)->visible(fn (Get $get): bool => $get('role') === UserRole::Lecturer->value),
                 TextInput::make('phone')->label('Nomor telepon')->tel()->maxLength(30)
                     ->visible(fn (Get $get): bool => in_array($get('role'), [UserRole::Student->value, UserRole::Lecturer->value], true)),

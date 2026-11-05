@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 
 class GuidanceBookingResource extends Resource
@@ -29,7 +30,7 @@ class GuidanceBookingResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Pemantauan';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     public static function form(Schema $schema): Schema
     {
@@ -71,6 +72,11 @@ class GuidanceBookingResource extends Resource
                         app(CancelGuidanceBookingByStaff::class)->handle($record, auth()->user(), $data['reason']);
                     }),
             ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['student.user', 'slot.lecturer.user']);
     }
 
     public static function getPages(): array

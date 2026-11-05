@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\StaffLogin;
 use App\Filament\Widgets\AdminOverviewStats;
 use App\Http\Middleware\RequirePasswordChange;
 use Filament\Http\Middleware\Authenticate;
@@ -13,7 +14,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -29,8 +29,12 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandName('MagangHub')
-            ->login()
+            ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))
+            ->brandLogoHeight('2.5rem')
+            ->login(StaffLogin::class)
+            ->strictAuthorization()
             ->colors([
                 'primary' => Color::hex('#1C3155'),
                 'success' => Color::hex('#15803D'),
@@ -48,7 +52,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 AdminOverviewStats::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

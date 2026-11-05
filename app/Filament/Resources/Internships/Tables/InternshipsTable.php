@@ -10,6 +10,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class InternshipsTable
@@ -26,7 +27,10 @@ class InternshipsTable
                 TextColumn::make('status')->label('Status')->badge(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')->label('Status')->options([
+                    InternshipStatus::Active->value => 'Aktif',
+                    InternshipStatus::Completed->value => 'Selesai',
+                ]),
             ])
             ->recordActions([
                 EditAction::make()

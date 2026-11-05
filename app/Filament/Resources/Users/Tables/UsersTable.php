@@ -10,6 +10,8 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Password;
@@ -22,6 +24,8 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')->label('Nama')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable()->sortable(),
+                TextColumn::make('student.nim')->label('NIM')->searchable(),
+                TextColumn::make('lecturer.nidn')->label('NIDN')->searchable(),
                 TextColumn::make('role')->label('Peran')->formatStateUsing(fn (UserRole $state): string => match ($state) {
                     UserRole::Admin => 'Admin',
                     UserRole::Lecturer => 'Dosen',
@@ -33,7 +37,15 @@ class UsersTable
                     ->color(fn (bool $state): string => $state ? 'info' : 'success'),
             ])
             ->filters([
-                //
+                SelectFilter::make('role')->label('Peran')->options([
+                    UserRole::Admin->value => 'Admin',
+                    UserRole::Lecturer->value => 'Dosen',
+                    UserRole::Student->value => 'Mahasiswa',
+                ]),
+                TernaryFilter::make('is_active')->label('Status')
+                    ->trueLabel('Aktif')->falseLabel('Nonaktif'),
+                TernaryFilter::make('must_change_password')->label('Kata sandi')
+                    ->trueLabel('Wajib diganti')->falseLabel('Sudah diganti'),
             ])
             ->recordActions([
                 Action::make('editProfile')

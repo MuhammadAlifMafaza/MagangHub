@@ -26,7 +26,7 @@ class ReportPeriodResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Data Akademik';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     public static function form(Schema $schema): Schema
     {
