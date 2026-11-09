@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Enums\UserRole;
 use App\Http\Responses\AuthenticatedLoginResponse;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -15,6 +16,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Fortify;
+use Laravel\Passkeys\Passkeys;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -34,6 +36,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        Passkeys::authorizeLoginUsing(fn (Request $request, User $user): bool => $user->role === UserRole::Student && $user->is_active);
     }
 
     /**
@@ -52,10 +55,10 @@ class FortifyServiceProvider extends ServiceProvider
 
             $identifier = Str::lower(trim($identifier));
             $matchingUsers = User::query()
+                ->where('role', UserRole::Student)
                 ->where(fn (Builder $query): Builder => $query
                     ->where('email', $identifier)
-                    ->orWhereHas('student', fn (Builder $studentQuery): Builder => $studentQuery->where('nim', $identifier))
-                    ->orWhereHas('lecturer', fn (Builder $lecturerQuery): Builder => $lecturerQuery->where('nidn', $identifier)))
+                    ->orWhereHas('student', fn (Builder $studentQuery): Builder => $studentQuery->where('nim', $identifier)))
                 ->limit(2)
                 ->get();
 

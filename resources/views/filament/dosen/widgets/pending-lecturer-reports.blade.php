@@ -12,6 +12,7 @@
                             <th scope="col" class="px-3 py-2">Mahasiswa</th>
                             <th scope="col" class="px-3 py-2">Minggu</th>
                             <th scope="col" class="px-3 py-2">Dikirim</th>
+                            <th scope="col" class="px-3 py-2 text-end">Tindakan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -20,6 +21,9 @@
                                 <td class="px-3 py-2">{{ $report->reportPeriod->internship->student->user->name }}</td>
                                 <td class="px-3 py-2">Minggu ke-{{ $report->reportPeriod->week_number }}</td>
                                 <td class="px-3 py-2">{{ $report->latestVersion?->submitted_at?->locale('id')->translatedFormat('d M Y, H:i') ?? 'Belum dikirim' }}</td>
+                                <td class="px-3 py-2 text-end">
+                                    <a href="{{ route('laporan.show', $report) }}" class="font-medium text-primary-600 hover:underline dark:text-primary-400">Buka laporan</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

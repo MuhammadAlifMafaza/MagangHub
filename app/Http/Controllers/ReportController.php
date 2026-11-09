@@ -77,6 +77,18 @@ class ReportController
         ]);
     }
 
+    public function preview(ReportVersion $version): StreamedResponse
+    {
+        Gate::authorize('download', $version);
+        abort_unless($version->mime_type === 'application/pdf', 415);
+        abort_unless(Storage::disk($version->disk)->exists($version->stored_path), 404);
+
+        return Storage::disk($version->disk)->response($version->stored_path, $version->original_name, [
+            'Content-Type' => 'application/pdf',
+            'X-Content-Type-Options' => 'nosniff',
+        ], 'inline');
+    }
+
     public function lecturerQueue(): View
     {
         $lecturer = request()->user()->lecturer;
@@ -92,7 +104,12 @@ class ReportController
     public function show(WeeklyReport $report): View
     {
         Gate::authorize('view', $report);
-        $report->load(['versions.review', 'reviews.lecturer.user', 'assessment' => fn ($query) => request()->user()->role->value === 'student' ? $query->published() : $query]);
+        $report->load([
+            'reportPeriod.internship.student.user',
+            'versions.review',
+            'reviews.lecturer.user',
+            'assessment' => fn ($query) => request()->user()->role->value === 'student' ? $query->published() : $query,
+        ]);
 
         return view('reports.show', compact('report'));
     }

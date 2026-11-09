@@ -22,11 +22,11 @@ class GuidanceBookingResource extends Resource
 {
     protected static ?string $model = GuidanceBooking::class;
 
-    protected static ?string $navigationLabel = 'Pemesanan Bimbingan';
+    protected static ?string $navigationLabel = 'Pemesanan Bimbingan Mahasiswa';
 
-    protected static ?string $modelLabel = 'pemesanan bimbingan';
+    protected static ?string $modelLabel = 'pemesanan mahasiswa';
 
-    protected static ?string $pluralModelLabel = 'pemesanan bimbingan';
+    protected static ?string $pluralModelLabel = 'pemesanan mahasiswa';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Pembimbingan';
 
@@ -55,30 +55,38 @@ class GuidanceBookingResource extends Resource
                     ->label('Tandai selesai')
                     ->color('success')
                     ->icon(Heroicon::CheckCircle)
+                    ->modalHeading('Selesaikan pemesanan bimbingan')
+                    ->modalSubmitActionLabel('Tandai selesai')
                     ->visible(fn (GuidanceBooking $record): bool => $record->status === GuidanceBookingStatus::Booked && $record->slot->starts_at->isPast())
                     ->schema([Textarea::make('notes')->label('Catatan bimbingan')->maxLength(5000)])
-                    ->action(function (GuidanceBooking $record, array $data, RecordGuidanceBookingOutcome $action): void {
+                    ->action(function (GuidanceBooking $record, array $data, RecordGuidanceBookingOutcome $recordGuidanceBookingOutcome): void {
                         Gate::authorize('recordOutcome', $record);
-                        $action->handle($record, auth()->user()->lecturer, GuidanceBookingStatus::Completed, $data['notes'] ?? null);
+                        $recordGuidanceBookingOutcome->handle($record, auth()->user()->lecturer, GuidanceBookingStatus::Completed, $data['notes'] ?? null);
                     }),
                 Action::make('noShow')
                     ->label('Tandai tidak hadir')
                     ->color('warning')
+                    ->icon(Heroicon::OutlinedUserMinus)
+                    ->modalHeading('Catat mahasiswa tidak hadir')
+                    ->modalSubmitActionLabel('Simpan catatan')
                     ->visible(fn (GuidanceBooking $record): bool => $record->status === GuidanceBookingStatus::Booked && $record->slot->starts_at->isPast())
                     ->schema([Textarea::make('notes')->label('Catatan bimbingan')->maxLength(5000)])
-                    ->action(function (GuidanceBooking $record, array $data, RecordGuidanceBookingOutcome $action): void {
+                    ->action(function (GuidanceBooking $record, array $data, RecordGuidanceBookingOutcome $recordGuidanceBookingOutcome): void {
                         Gate::authorize('recordOutcome', $record);
-                        $action->handle($record, auth()->user()->lecturer, GuidanceBookingStatus::NoShow, $data['notes'] ?? null);
+                        $recordGuidanceBookingOutcome->handle($record, auth()->user()->lecturer, GuidanceBookingStatus::NoShow, $data['notes'] ?? null);
                     }),
                 Action::make('cancelBooking')
                     ->label('Batalkan')
                     ->color('danger')
+                    ->icon(Heroicon::OutlinedXCircle)
+                    ->modalHeading('Batalkan pemesanan mahasiswa')
+                    ->modalSubmitActionLabel('Batalkan pemesanan')
                     ->requiresConfirmation()
                     ->visible(fn (GuidanceBooking $record): bool => $record->status === GuidanceBookingStatus::Booked)
                     ->schema([Textarea::make('reason')->label('Alasan pembatalan')->required()->maxLength(255)])
-                    ->action(function (GuidanceBooking $record, array $data, CancelGuidanceBookingByStaff $action): void {
+                    ->action(function (GuidanceBooking $record, array $data, CancelGuidanceBookingByStaff $cancelGuidanceBooking): void {
                         Gate::authorize('cancelByLecturer', $record);
-                        $action->handle($record, auth()->user(), $data['reason']);
+                        $cancelGuidanceBooking->handle($record, auth()->user(), $data['reason']);
                     }),
             ])
             ->toolbarActions([]);

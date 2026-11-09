@@ -8,52 +8,76 @@ use App\Models\Assessment;
 use App\Models\GuidanceBooking;
 use App\Models\GuidanceSlot;
 use App\Models\WeeklyReport;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
-class LecturerGuidanceStats extends BaseWidget
+class LecturerGuidanceStats extends Widget
 {
-    protected ?string $pollingInterval = null;
+    protected string $view = 'filament.dosen.widgets.lecturer-guidance-stats';
 
-    protected function getStats(): array
+    protected int|string|array $columnSpan = 'full';
+
+    protected function getViewData(): array
     {
-        $lecturerId = Auth::user()?->lecturer?->getKey();
+        $lecturer = Auth::user()?->lecturer;
 
-        if (! $lecturerId) {
+        if ($lecturer === null) {
             return [
-                Stat::make('Slot pembimbingan mendatang', 0),
-                Stat::make('Pemesanan mendatang', 0),
-                Stat::make('Mahasiswa bimbingan aktif', 0),
-                Stat::make('Laporan menunggu pemeriksaan', 0),
-                Stat::make('Penilaian draf', 0),
+                'stats' => [
+                    'upcoming_slots' => 0,
+                    'upcoming_bookings' => 0,
+                    'active_students' => 0,
+                    'draft_assessments' => 0,
+                ],
+                'reportStatuses' => [],
             ];
         }
 
-        $upcomingSlots = GuidanceSlot::query()
-            ->where('lecturer_id', $lecturerId)
-            ->where('status', 'open')
-            ->where('starts_at', '>=', now());
+        $lecturerId = $lecturer->getKey();
+
+        $reportStatusCounts = WeeklyReport::query()
+            ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn (Builder $query): Builder => $query
+                ->where('lecturer_id', $lecturerId)
+                ->where('status', 'active'))
+            ->selectRaw('review_status, COUNT(*) as aggregate')
+            ->groupBy('review_status')
+            ->pluck('aggregate', 'review_status');
+
+        $reportStatuses = collect(ReviewStatus::cases())
+            ->map(fn (ReviewStatus $status): array => [
+                'label' => $status->label(),
+                'color' => $status->color(),
+                'count' => (int) $reportStatusCounts->get($status->value, 0),
+            ])
+            ->all();
 
         return [
-            Stat::make('Slot pembimbingan mendatang', (clone $upcomingSlots)->count()),
-            Stat::make('Pemesanan mendatang', GuidanceBooking::query()
-                ->where('status', 'booked')
-                ->whereHas('slot', fn ($query) => $query->where('lecturer_id', $lecturerId)->where('starts_at', '>=', now()))
-                ->count()),
-            Stat::make('Mahasiswa bimbingan aktif', Auth::user()->lecturer->supervisorAssignments()->where('status', 'active')->distinct('student_id')->count('student_id')),
-            Stat::make('Laporan menunggu pemeriksaan', WeeklyReport::query()
-                ->where('review_status', ReviewStatus::PendingReview)
-                ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn (Builder $query) => $query
-                    ->where('lecturer_id', $lecturerId)->where('status', 'active'))
-                ->count()),
-            Stat::make('Penilaian draf', Assessment::query()
-                ->where('lecturer_id', $lecturerId)
-                ->where('status', AssessmentStatus::Draft)
-                ->whereHas('weeklyReport.reportPeriod.internship.student.supervisorAssignments', fn (Builder $query) => $query
-                    ->where('lecturer_id', $lecturerId)->where('status', 'active'))
-                ->count()),
+            'stats' => [
+                'upcoming_slots' => GuidanceSlot::query()
+                    ->where('lecturer_id', $lecturerId)
+                    ->where('status', 'open')
+                    ->where('starts_at', '>=', now())
+                    ->count(),
+                'upcoming_bookings' => GuidanceBooking::query()
+                    ->where('status', 'booked')
+                    ->whereHas('slot', fn (Builder $query): Builder => $query
+                        ->where('lecturer_id', $lecturerId)
+                        ->where('starts_at', '>=', now()))
+                    ->count(),
+                'active_students' => $lecturer->supervisorAssignments()
+                    ->where('status', 'active')
+                    ->distinct('student_id')
+                    ->count('student_id'),
+                'draft_assessments' => Assessment::query()
+                    ->where('lecturer_id', $lecturerId)
+                    ->where('status', AssessmentStatus::Draft)
+                    ->whereHas('weeklyReport.reportPeriod.internship.student.supervisorAssignments', fn (Builder $query): Builder => $query
+                        ->where('lecturer_id', $lecturerId)
+                        ->where('status', 'active'))
+                    ->count(),
+            ],
+            'reportStatuses' => $reportStatuses,
         ];
     }
 }

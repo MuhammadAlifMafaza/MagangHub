@@ -42,16 +42,15 @@ test('students can authenticate using their NIM', function () {
     $this->assertAuthenticatedAs($student->user);
 });
 
-test('lecturers can authenticate using their NIDN', function () {
+test('lecturers cannot authenticate through the student login using their NIDN', function () {
     $lecturer = Lecturer::factory()->create();
 
     $this->post(route('login.store'), [
         'email' => $lecturer->nidn,
         'password' => 'password',
-    ])->assertSessionHasNoErrors()
-        ->assertRedirect('/dosen');
+    ])->assertSessionHasErrorsIn('email');
 
-    $this->assertAuthenticatedAs($lecturer->user);
+    $this->assertGuest();
 });
 
 test('ambiguous login identifiers are rejected', function () {
@@ -89,19 +88,18 @@ test('landing page shows the role-specific panel link and logout action to authe
     'admin' => [UserRole::Admin, '/admin'],
 ]);
 
-test('staff login redirects to the correct Filament panel', function (UserRole $role, string $destination) {
+test('staff accounts cannot authenticate through the student login', function (UserRole $role) {
     $user = User::factory()->create(['role' => $role]);
 
     $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'password',
-    ])->assertSessionHasNoErrors()
-        ->assertRedirect($destination);
+    ])->assertSessionHasErrorsIn('email');
 
-    $this->assertAuthenticatedAs($user);
+    $this->assertGuest();
 })->with([
-    'admin' => [UserRole::Admin, '/admin'],
-    'lecturer' => [UserRole::Lecturer, '/dosen'],
+    'admin' => [UserRole::Admin],
+    'lecturer' => [UserRole::Lecturer],
 ]);
 
 test('users can not authenticate with invalid password', function () {

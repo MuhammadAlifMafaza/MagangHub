@@ -49,24 +49,29 @@
 </x-layouts::app.sidebar>
 @else
 @if (request()->user()->role->value === 'lecturer')
-<main class="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
+<main class="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 text-ink sm:px-6 sm:py-8 lg:px-8">
     <nav aria-label="Breadcrumb" class="text-sm text-ink-muted"><a class="underline underline-offset-4 hover:text-primary-700" href="{{ route('dosen.laporan.antrean') }}">Antrean laporan</a><span aria-hidden="true"> / </span><span aria-current="page">Detail laporan</span></nav>
-    <header class="flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-sm text-ink-muted">Pemeriksaan laporan mahasiswa</p><h1 class="mt-1 text-2xl font-semibold tracking-tight">Laporan minggu ke-{{ $report->reportPeriod->week_number }}</h1><p class="mt-1 text-sm text-ink-muted">{{ $report->reportPeriod->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $report->reportPeriod->ends_on->locale('id')->translatedFormat('d M Y') }}</p></div><x-ui.status-badge :label="$report->review_status->label()" :tone="$report->review_status->color()" /></header>
+    <header class="flex flex-col gap-4 rounded-2xl border border-primary-100 bg-linear-to-r from-primary-50/80 to-surface p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6"><div><p class="text-sm text-ink-muted">Pemeriksaan laporan mahasiswa</p><h1 class="mt-1 text-2xl font-semibold tracking-tight">Laporan minggu ke-{{ $report->reportPeriod->week_number }}</h1><p class="mt-2 font-medium">{{ $report->reportPeriod->internship->student->user->name }}</p><p class="mt-1 text-sm text-ink-muted">{{ $report->reportPeriod->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $report->reportPeriod->ends_on->locale('id')->translatedFormat('d M Y') }}</p></div><x-ui.status-badge :label="$report->review_status->label()" :tone="$report->review_status->color()" /></header>
 
-    <section aria-labelledby="lecturer-versions-heading" class="overflow-hidden rounded-lg border border-line bg-surface">
-        <div class="border-b border-line px-4 py-4 sm:px-5"><h2 id="lecturer-versions-heading" class="font-semibold">Berkas dan umpan balik</h2></div>
+    <section aria-labelledby="lecturer-versions-heading" class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
+        <div class="border-b border-line px-4 py-4 sm:px-5"><h2 id="lecturer-versions-heading" class="font-semibold">Riwayat berkas dan umpan balik</h2><p class="mt-1 text-sm text-ink-muted">Baca PDF langsung atau unduh dokumen laporan.</p></div>
         <ol class="divide-y divide-line px-4 sm:px-5">
             @foreach ($report->versions as $version)
                 <li class="flex flex-col gap-3 py-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div class="min-w-0"><h3 class="font-medium">Versi {{ $version->version_number }}@if ($loop->last) <span class="text-sm font-normal text-ink-muted">(terbaru)</span>@endif</h3><p class="mt-1 break-all text-sm text-ink">{{ $version->original_name }}</p><p class="mt-1 text-sm text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB · {{ number_format($version->size_bytes / 1024, 0) }} KB</p>@if ($version->review)<div class="mt-3 rounded-md bg-bg p-3"><p class="text-sm font-medium">{{ $version->review->decision->label() }}</p><p class="mt-1 whitespace-pre-line text-sm leading-6 text-ink-muted">{{ $version->review->feedback ?: 'Tidak ada catatan tambahan.' }}</p></div>@endif</div>
-                    <a class="inline-flex min-h-10 shrink-0 items-center justify-center rounded-md border border-line-input px-3 py-2 text-sm font-medium text-primary-700 hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.download', $version) }}">Unduh berkas</a>
+                    <div class="min-w-0"><h3 class="font-semibold">Versi {{ $version->version_number }}@if ($loop->last) <span class="text-sm font-normal text-ink-muted">(terbaru)</span>@endif</h3><p class="mt-1 break-all text-sm text-ink">{{ $version->original_name }}</p><p class="mt-1 text-sm text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB · {{ number_format($version->size_bytes / 1024, 0) }} KB</p>@if ($version->review)<div class="mt-3 rounded-xl bg-bg p-3"><p class="text-sm font-medium">{{ $version->review->decision->label() }}</p><p class="mt-1 whitespace-pre-line text-sm leading-6 text-ink-muted">{{ $version->review->feedback ?: 'Tidak ada catatan tambahan.' }}</p></div>@endif</div>
+                    <div class="flex shrink-0 flex-wrap gap-2">
+                        @if ($version->mime_type === 'application/pdf')
+                            <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener">Baca PDF</a>
+                        @endif
+                        <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.download', $version) }}">Unduh berkas</a>
+                    </div>
                 </li>
             @endforeach
         </ol>
     </section>
 
     @if ($report->review_status->value === 'pending_review')
-        <form method="POST" action="{{ route('dosen.laporan.review', $report) }}" class="space-y-5 rounded-lg border border-line bg-surface p-4 sm:p-5">
+        <form method="POST" action="{{ route('dosen.laporan.review', $report) }}" class="space-y-5 rounded-2xl border border-line bg-surface p-4 shadow-sm shadow-primary-800/[0.03] sm:p-5">
             @csrf
             <fieldset class="space-y-3"><legend class="font-semibold">Keputusan pemeriksaan</legend><div class="flex flex-col gap-3 sm:flex-row sm:gap-6"><label class="inline-flex items-center gap-2 text-sm"><input type="radio" name="decision" value="approved" required class="size-4 accent-primary-700"> Setujui</label><label class="inline-flex items-center gap-2 text-sm"><input type="radio" name="decision" value="revision_requested" class="size-4 accent-primary-700"> Minta revisi</label></div></fieldset>
             <div class="space-y-2"><label for="review-feedback" class="text-sm font-medium">Umpan balik</label><textarea id="review-feedback" class="block w-full rounded-md border border-line-input bg-surface p-3 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" name="feedback" rows="4">{{ old('feedback') }}</textarea>@error('feedback')<p role="alert" class="text-sm text-danger">{{ $message }}</p>@enderror</div>
@@ -75,7 +80,7 @@
     @endif
 
     @if ($report->review_status->value === 'approved')
-        <section aria-labelledby="assessment-heading" class="space-y-4 rounded-lg border border-line bg-surface p-4 sm:p-5">
+        <section aria-labelledby="assessment-heading" class="space-y-4 rounded-2xl border border-line bg-surface p-4 shadow-sm shadow-primary-800/[0.03] sm:p-5">
             <div><h2 id="assessment-heading" class="font-semibold">Penilaian</h2><p class="mt-1 text-sm text-ink-muted">Nilai yang disimpan sebagai draf belum terlihat oleh mahasiswa.</p></div>
             <form method="POST" action="{{ route('dosen.laporan.penilaian.update', $report) }}" class="space-y-4">
                 @csrf @method('PUT')

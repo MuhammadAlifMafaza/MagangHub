@@ -29,7 +29,7 @@ class ReportReviewResource extends Resource
 {
     protected static ?string $model = WeeklyReport::class;
 
-    protected static ?string $navigationLabel = 'Pemeriksaan & Penilaian';
+    protected static ?string $navigationLabel = 'Pemeriksaan Laporan';
 
     protected static ?string $modelLabel = 'laporan';
 
@@ -75,7 +75,7 @@ class ReportReviewResource extends Resource
             ])
             ->recordActions([
                 Action::make('review')
-                    ->label('Detail')
+                    ->label('Detail laporan')
                     ->icon(Heroicon::OutlinedClipboardDocumentCheck)
                     ->schema([
                         TextEntry::make('reportPeriod.internship.student.user.name')->label('Mahasiswa'),
@@ -84,12 +84,19 @@ class ReportReviewResource extends Resource
                         TextEntry::make('latestVersion.original_name')->label('Berkas terbaru'),
                         TextEntry::make('latestVersion.submitted_at')->label('Dikirim')->dateTime('d M Y, H:i'),
                         TextEntry::make('latestVersion.student_note')->label('Catatan mahasiswa')->placeholder('—'),
-                        TextEntry::make('latestVersion.id')->label('Unduh berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => $record->latestVersion ? 'Unduh versi terbaru' : 'Tidak tersedia')
-                            ->url(fn (WeeklyReport $record): ?string => $record->latestVersion ? route('laporan.versi.download', $record->latestVersion) : null)
+                        TextEntry::make('latestVersion.id')->label('Baca dokumen')->formatStateUsing(fn ($state, WeeklyReport $record): string => match (true) {
+                            $record->latestVersion === null => 'Tidak tersedia',
+                            $record->latestVersion->mime_type === 'application/pdf' => 'Buka PDF di tab baru',
+                            default => 'Unduh berkas untuk membacanya.',
+                        })
+                            ->url(fn ($state, WeeklyReport $record): ?string => $record->latestVersion?->mime_type === 'application/pdf' ? route('laporan.versi.preview', $record->latestVersion) : null)
                             ->openUrlInNewTab(),
-                    ])->modalSubmitAction(false)->modalCancelActionLabel('Tutup'),
+                        TextEntry::make('latestVersion.id')->label('Unduh berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => $record->latestVersion ? 'Unduh versi terbaru' : 'Tidak tersedia')
+                            ->url(fn ($state, WeeklyReport $record): ?string => $record->latestVersion ? route('laporan.versi.download', $record->latestVersion) : null),
+                    ])->modalHeading('Detail pemeriksaan laporan')->modalWidth('3xl')->modalSubmitAction(false)->modalCancelActionLabel('Tutup'),
                 Action::make('decision')
                     ->label('Beri Keputusan')
+                    ->icon(Heroicon::OutlinedClipboardDocumentCheck)
                     ->visible(fn (WeeklyReport $record): bool => $record->review_status === ReviewStatus::PendingReview)
                     ->requiresConfirmation()
                     ->modalHeading('Konfirmasi keputusan pemeriksaan')
@@ -102,12 +109,13 @@ class ReportReviewResource extends Resource
                         ])->required(),
                         Textarea::make('feedback')->label('Umpan balik')->rows(4)->maxLength(10000),
                     ])
-                    ->action(function (WeeklyReport $record, array $data, ReviewReport $reviewReport): void {
+                    ->action(function (WeeklyReport $record, array $data, ReviewReport $reviewReportAction): void {
                         Gate::authorize('review', $record);
-                        $reviewReport->handle(auth()->user()->lecturer, $record, ReportReviewDecision::from($data['decision']), $data['feedback'] ?? null);
+                        $reviewReportAction->handle(auth()->user()->lecturer, $record, ReportReviewDecision::from($data['decision']), $data['feedback'] ?? null);
                     }),
                 Action::make('assessment')
                     ->label('Simpan Draf Nilai')
+                    ->icon(Heroicon::OutlinedPencilSquare)
                     ->visible(fn (WeeklyReport $record): bool => $record->review_status === ReviewStatus::Approved && $record->assessment?->status !== AssessmentStatus::Published)
                     ->schema([
                         TextInput::make('score')->label('Nilai (0–100)')->numeric()->minValue(0)->maxValue(100)->step('0.01')->required(),
@@ -117,21 +125,22 @@ class ReportReviewResource extends Resource
                         'score' => $record->assessment?->score,
                         'notes' => $record->assessment?->notes,
                     ])
-                    ->action(function (WeeklyReport $record, array $data, SaveAssessment $saveAssessment): void {
+                    ->action(function (WeeklyReport $record, array $data, SaveAssessment $saveAssessmentAction): void {
                         Gate::authorize('assess', $record);
-                        $saveAssessment->handle(auth()->user()->lecturer, $record, $data['score'], $data['notes'] ?? null);
+                        $saveAssessmentAction->handle(auth()->user()->lecturer, $record, $data['score'], $data['notes'] ?? null);
                     }),
                 Action::make('publish')
                     ->label('Publikasikan')
                     ->color('success')
+                    ->icon(Heroicon::OutlinedPaperAirplane)
                     ->requiresConfirmation()
                     ->visible(fn (WeeklyReport $record): bool => $record->assessment?->status === AssessmentStatus::Draft)
-                    ->action(function (WeeklyReport $record, PublishAssessment $publishAssessment): void {
+                    ->action(function (WeeklyReport $record, PublishAssessment $publishAssessmentAction): void {
                         $assessment = $record->assessment;
                         abort_unless($assessment instanceof Assessment, 404);
                         Gate::authorize('update', $assessment);
                         abort_unless($assessment->lecturer_id === auth()->user()->lecturer->id, 403);
-                        $publishAssessment->handle($assessment);
+                        $publishAssessmentAction->handle($assessment);
                     }),
             ])
             ->toolbarActions([]);

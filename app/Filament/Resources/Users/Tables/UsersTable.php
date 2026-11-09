@@ -24,8 +24,8 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')->label('Nama')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable()->sortable(),
-                TextColumn::make('student.nim')->label('NIM')->searchable(),
-                TextColumn::make('lecturer.nidn')->label('NIDN')->searchable(),
+                TextColumn::make('student.nim')->label('NIM')->searchable()->placeholder('None'),
+                TextColumn::make('lecturer.nidn')->label('NIDN')->searchable()->placeholder('None'),
                 TextColumn::make('role')->label('Peran')->formatStateUsing(fn (UserRole $state): string => match ($state) {
                     UserRole::Admin => 'Admin',
                     UserRole::Lecturer => 'Dosen',

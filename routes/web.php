@@ -6,10 +6,18 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
-Route::middleware('guest')->prefix('password/otp')->name('password.otp.')->group(function () {
-    Route::post('/', [PasswordResetOtpController::class, 'store'])->middleware('throttle:5,1')->name('send');
-    Route::get('/verify', [PasswordResetOtpController::class, 'create'])->name('verify');
-    Route::post('/reset', [PasswordResetOtpController::class, 'reset'])->middleware('throttle:10,1')->name('reset');
+Route::middleware('guest')->group(function () {
+    Route::post('/password/otp/{audience}', [PasswordResetOtpController::class, 'store'])
+        ->whereIn('audience', ['student', 'staff'])
+        ->middleware('throttle:5,1')
+        ->name('password.otp.send');
+    Route::get('/password/otp/{audience}/verify', [PasswordResetOtpController::class, 'create'])
+        ->whereIn('audience', ['student', 'staff'])
+        ->name('password.otp.verify');
+    Route::post('/password/otp/{audience}/reset', [PasswordResetOtpController::class, 'reset'])
+        ->whereIn('audience', ['student', 'staff'])
+        ->middleware('throttle:10,1')
+        ->name('password.otp.reset');
 });
 
 Route::middleware(['auth', 'student.account'])->prefix('mahasiswa')->group(function () {

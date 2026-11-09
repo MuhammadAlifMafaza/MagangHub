@@ -14,7 +14,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -51,7 +50,6 @@ class DosenPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Dosen/Widgets'), for: 'App\Filament\Dosen\Widgets')
             ->widgets([
-                    // AccountWidget::class,
                 LecturerGuidanceStats::class,
                 PendingLecturerReports::class,
             ])

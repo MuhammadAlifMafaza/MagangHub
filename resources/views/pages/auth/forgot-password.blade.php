@@ -26,9 +26,8 @@
 
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('password.otp.send') }}" class="flex flex-col gap-6">
+        <form method="POST" action="{{ route('password.otp.send', ['audience' => $audience]) }}" class="flex flex-col gap-6">
             @csrf
-            <input type="hidden" name="audience" value="{{ $audience }}">
             @if ($audience === 'staff')
                 <input type="hidden" name="panel" value="{{ $panel }}">
             @endif
