@@ -10,6 +10,7 @@ use App\Enums\GuidanceSlotStatus;
 use App\Filament\Dosen\Resources\GuidanceSlots\Pages\ManageGuidanceSlots;
 use App\Models\GuidanceSlot;
 use BackedEnum;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Textarea;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -129,8 +131,34 @@ class GuidanceSlotResource extends Resource
             Section::make('Jadwal')
                 ->columns(2)
                 ->schema([
-                    DateTimePicker::make('starts_at')->label('Waktu mulai')->timezone(config('magang.timezone'))->seconds(false)->required(),
-                    DateTimePicker::make('ends_at')->label('Waktu selesai')->timezone(config('magang.timezone'))->seconds(false)->required(),
+                    DateTimePicker::make('starts_at')
+                        ->label('Waktu mulai')
+                        ->timezone(config('magang.timezone'))
+                        ->seconds(false)
+                        ->required()
+                        ->helperText('Pilih waktu yang akan datang. Durasi slot harus '.config('magang.guidance.minimum_duration_minutes').'–'.config('magang.guidance.maximum_duration_minutes').' menit.'),
+                    DateTimePicker::make('ends_at')
+                        ->label('Waktu selesai')
+                        ->timezone(config('magang.timezone'))
+                        ->seconds(false)
+                        ->after('starts_at')
+                        ->rules([
+                            fn (Get $get): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get): void {
+                                $startsAt = $get('starts_at');
+
+                                if (blank($startsAt) || blank($value)) {
+                                    return;
+                                }
+
+                                $duration = now()->parse($startsAt)->diffInMinutes(now()->parse($value));
+
+                                if ($duration > config('magang.guidance.maximum_duration_minutes')) {
+                                    $fail('Durasi slot tidak boleh lebih dari '.config('magang.guidance.maximum_duration_minutes').' menit.');
+                                }
+                            },
+                        ])
+                        ->required()
+                        ->helperText('Waktu selesai harus setelah waktu mulai dan maksimal '.config('magang.guidance.maximum_duration_minutes').' menit sesudahnya.'),
                 ]),
             Section::make('Kapasitas dan lokasi')
                 ->columns(2)
