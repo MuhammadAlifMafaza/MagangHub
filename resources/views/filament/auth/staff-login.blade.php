@@ -24,8 +24,7 @@
             </div>
 
             <div class="mt-6 flex flex-col items-start gap-3 text-sm xl:flex-row xl:items-center xl:justify-between">
-                <a href="{{ route('password.request') }}" class="font-medium text-primary-700 underline underline-offset-4">Lupa kata sandi?</a>
-                <a href="{{ route('login') }}" class="text-gray-600 underline underline-offset-4 dark:text-gray-300">Masuk melalui portal mahasiswa</a>
+                <a href="{{ route('password.request', ['audience' => 'staff', 'panel' => filament()->getCurrentPanel()->getId()]) }}" class="font-medium text-primary-700 underline underline-offset-4">Lupa kata sandi?</a>
             </div>
         </section>
     </div>

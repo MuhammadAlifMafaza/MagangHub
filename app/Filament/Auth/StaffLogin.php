@@ -17,7 +17,7 @@ class StaffLogin extends BaseLogin
 {
     protected string $view = 'filament.auth.staff-login';
 
-    protected Width|string|null $maxWidth = Width::None;
+    protected Width|string|null $maxWidth = Width::FiveExtraLarge;
 
     protected function getEmailFormComponent(): Component
     {

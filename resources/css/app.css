@@ -54,6 +54,12 @@
     --color-accent-foreground: var(--color-white);
 }
 
+@layer components {
+    .student-login-brand {
+        background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
+    }
+}
+
 @layer theme {
     .dark {
         --color-primary-50: #1b2a3d;

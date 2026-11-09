@@ -61,9 +61,6 @@
                     </flux:button>
                 </form>
 
-                <p class="text-center text-sm text-gray-600 dark:text-gray-300">
-                    Staff? <a href="{{ url('/admin/login') }}" class="font-semibold text-primary-700 underline underline-offset-4">Masuk ke portal staff</a>
-                </p>
             </div>
         </section>
     </main>

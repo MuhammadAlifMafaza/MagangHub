@@ -6,8 +6,8 @@
         <meta name="description" content="MagangHub membantu mahasiswa dan dosen Institut Widya Pratama Pekalongan mengelola laporan mingguan, umpan balik, dan jadwal pembimbingan magang.">
         <meta name="theme-color" content="#1c3155">
         <title>MagangHub — Portal Pengelolaan Magang</title>
-        <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
-        <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+        <link rel="icon" href="{{ asset('images/brand/Logo.svg') }}" type="image/svg+xml">
+        <link rel="shortcut icon" href="{{ asset('images/brand/Logo.svg') }}" type="image/svg+xml">
         <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>

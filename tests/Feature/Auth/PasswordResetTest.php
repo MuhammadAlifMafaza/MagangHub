@@ -12,7 +12,37 @@ beforeEach(function () {
 
 test('custom login and OTP recovery screens can be rendered', function () {
     $this->get(route('login'))->assertOk()->assertSee('Masuk sebagai mahasiswa');
-    $this->get(route('password.request'))->assertOk()->assertSee('Kirim kode verifikasi');
+    $this->get(route('password.request'))
+        ->assertOk()
+        ->assertSee('Kirim kode verifikasi')
+        ->assertSee('Pemulihan akun mahasiswa')
+        ->assertDontSee('Masuk sebagai staff');
+
+    $this->get(route('password.request', ['audience' => 'staff', 'panel' => 'dosen']))
+        ->assertOk()
+        ->assertSee('Pemulihan akun staff')
+        ->assertDontSee('portal mahasiswa');
+});
+
+test('staff password recovery returns to the same staff panel', function () {
+    Mail::fake();
+    $user = User::factory()->create();
+
+    $this->post(route('password.otp.send'), [
+        'email' => $user->email,
+        'audience' => 'staff',
+        'panel' => 'dosen',
+    ]);
+
+    Mail::assertSent(PasswordResetCode::class, function (PasswordResetCode $mail): bool {
+        $this->post(route('password.otp.reset'), [
+            'code' => $mail->code,
+            'password' => 'new-password-123',
+            'password_confirmation' => 'new-password-123',
+        ])->assertRedirect('/dosen/login');
+
+        return true;
+    });
 });
 
 test('password reset code is mailed to the requested account', function () {

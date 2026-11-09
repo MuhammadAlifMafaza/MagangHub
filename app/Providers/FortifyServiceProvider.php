@@ -83,7 +83,10 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::twoFactorChallengeView(fn () => view('pages::auth.two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));
         Fortify::resetPasswordView(fn (Request $request) => view('pages::auth.reset-password', ['request' => $request]));
-        Fortify::requestPasswordResetLinkView(fn () => view('pages::auth.forgot-password'));
+        Fortify::requestPasswordResetLinkView(fn (Request $request) => view('pages::auth.forgot-password', [
+            'audience' => $request->query('audience') === 'staff' ? 'staff' : 'student',
+            'panel' => in_array($request->query('panel'), ['admin', 'dosen'], true) ? $request->query('panel') : 'admin',
+        ]));
     }
 
     /**

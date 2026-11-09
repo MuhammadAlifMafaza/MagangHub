@@ -10,7 +10,7 @@
 
     .fi-simple-page-content {
         width: 100%;
-        max-width: 80rem;
+        max-width: 64rem;
     }
 
     .staff-login-form,
@@ -23,8 +23,11 @@
         background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
     }
 
-    .student-login-brand {
-        background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
+    .fi-simple-main:has(.staff-login-brand) {
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        --tw-ring-shadow: 0 0 #0000;
     }
 
     @media (max-width: 1023px) {

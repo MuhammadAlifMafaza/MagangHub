@@ -9,7 +9,10 @@ use Laravel\Fortify\Features;
 test('login screen can be rendered', function () {
     $response = $this->get(route('login'));
 
-    $response->assertOk();
+    $response->assertOk()
+        ->assertSee('Masuk sebagai mahasiswa')
+        ->assertSee('images/brand/Logo.svg')
+        ->assertDontSee('Masuk ke portal staff');
 });
 
 test('users can authenticate using the login screen', function () {
@@ -67,7 +70,7 @@ test('landing page shows the sign-in action to guests', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertSee('Masuk', false)
-        ->assertSee('favicon.svg', false)
+        ->assertSee('images/brand/Logo.svg', false)
         ->assertSee('apple-touch-icon.png', false);
 });
 

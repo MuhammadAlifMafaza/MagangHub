@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -34,10 +35,16 @@ class PasswordResetOtpController extends Controller
     {
         $validated = $request->validate([
             'email' => ['required', 'email', 'max:255'],
+            'audience' => ['nullable', Rule::in(['student', 'staff'])],
+            'panel' => ['nullable', Rule::in(['admin', 'dosen'])],
         ]);
 
         $email = mb_strtolower(trim($validated['email']));
+        $audience = $validated['audience'] ?? 'student';
+        $panel = $audience === 'staff' ? ($validated['panel'] ?? 'admin') : null;
         $request->session()->put('password_otp_email', $email);
+        $request->session()->put('password_otp_audience', $audience);
+        $request->session()->put('password_otp_panel', $panel);
         $requestKey = 'password-otp-request:'.hash('sha256', $email.'|'.$request->ip());
         $ipKey = 'password-otp-request-ip:'.hash('sha256', $request->ip());
         $status = 'Jika email terdaftar, kode verifikasi akan dikirimkan. Periksa kotak masuk Anda.';
@@ -89,12 +96,12 @@ class PasswordResetOtpController extends Controller
         }
 
         $request->merge(['email' => $email]);
+        RateLimiter::hit($key, 600);
+
         $request->validate([
             'code' => ['required', 'digits:6'],
             'password' => ['required', 'string', PasswordRule::default(), 'confirmed'],
         ]);
-
-        RateLimiter::hit($key, 600);
 
         $status = Password::broker(config('fortify.passwords'))->reset(
             [
@@ -118,9 +125,15 @@ class PasswordResetOtpController extends Controller
         }
 
         RateLimiter::clear($key);
-        RateLimiter::clear('password-otp-request:'.hash('sha256', $email.'|'.$request->ip()));
+        $audience = $request->session()->get('password_otp_audience', 'student');
+        $panel = $request->session()->get('password_otp_panel', 'admin');
         $request->session()->forget('password_otp_email');
+        $request->session()->forget(['password_otp_audience', 'password_otp_panel']);
 
-        return redirect()->route('login')->with('status', 'Kata sandi berhasil diperbarui. Silakan masuk kembali.');
+        $loginUrl = $audience === 'staff' && in_array($panel, ['admin', 'dosen'], true)
+            ? url("/{$panel}/login")
+            : route('login');
+
+        return redirect($loginUrl)->with('status', 'Kata sandi berhasil diperbarui. Silakan masuk kembali.');
     }
 }
