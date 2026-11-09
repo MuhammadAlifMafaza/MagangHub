@@ -10,16 +10,36 @@
 
     .fi-simple-page-content {
         width: 100%;
-        max-width: 68rem;
+        max-width: 80rem;
+    }
+
+    .staff-login-form,
+    .staff-login-form > * {
+        min-width: 0;
+        width: 100%;
     }
 
     .staff-login-brand {
         background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
     }
 
+    .student-login-brand {
+        background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
+    }
+
     @media (max-width: 1023px) {
         .fi-simple-page-content {
             max-width: 34rem;
+        }
+    }
+
+    @media (max-width: 639px) {
+        .fi-simple-page-content {
+            max-width: calc(100vw - 2rem);
+        }
+
+        .staff-login-form {
+            margin-top: 1.5rem;
         }
     }
 }

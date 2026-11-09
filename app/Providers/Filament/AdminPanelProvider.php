@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('MagangHub')
             ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))
             ->brandLogoHeight('2.5rem')
+            ->favicon(asset('images/brand/Logo.svg'))
             ->login(StaffLogin::class)
             ->strictAuthorization()
             ->colors([
@@ -50,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
+                    // AccountWidget::class,
                 AdminOverviewStats::class,
             ])
             ->middleware([

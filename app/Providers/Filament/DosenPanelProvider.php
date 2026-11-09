@@ -33,6 +33,7 @@ class DosenPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))
             ->brandLogoHeight('2.5rem')
+            ->favicon(asset('images/brand/Logo.svg'))
             ->login(StaffLogin::class)
             ->strictAuthorization()
             ->colors([
@@ -50,7 +51,7 @@ class DosenPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Dosen/Widgets'), for: 'App\Filament\Dosen\Widgets')
             ->widgets([
-                AccountWidget::class,
+                    // AccountWidget::class,
                 LecturerGuidanceStats::class,
                 PendingLecturerReports::class,
             ])

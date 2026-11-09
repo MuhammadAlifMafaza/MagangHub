@@ -8,6 +8,7 @@ use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -15,6 +16,8 @@ use Illuminate\Support\Str;
 class StaffLogin extends BaseLogin
 {
     protected string $view = 'filament.auth.staff-login';
+
+    protected Width|string|null $maxWidth = Width::None;
 
     protected function getEmailFormComponent(): Component
     {
