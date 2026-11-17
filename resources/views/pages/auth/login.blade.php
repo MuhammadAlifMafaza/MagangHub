@@ -1,5 +1,5 @@
 <x-layouts::auth.simple title="Masuk Mahasiswa" :wide="true">
-    <main class="grid w-full overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900 lg:grid-cols-[minmax(0,1.1fr)_minmax(24rem,0.9fr)]">
+    <main class="grid w-full overflow-hidden rounded-3xl border border-line bg-surface shadow-xl lg:grid-cols-[minmax(0,1.1fr)_minmax(24rem,0.9fr)]">
         <aside class="student-login-brand relative hidden min-w-0 flex-col justify-between overflow-hidden p-10 text-white lg:flex xl:p-14">
             <div aria-hidden="true" class="absolute -end-24 -top-24 size-80 rounded-full border-[40px] border-white/10"></div>
             <div class="relative">
@@ -13,11 +13,11 @@
 
         <section class="min-w-0 p-6 sm:p-10 xl:p-14">
             <div class="mb-8 lg:hidden">
-                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-10 w-auto">
+                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-10 w-auto rounded-lg bg-white px-3 py-2">
             </div>
             <p class="text-sm font-semibold text-primary-700">Selamat datang kembali</p>
-            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">Masuk ke MagangHub</h2>
-            <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">Gunakan akun mahasiswa yang telah diberikan oleh administrator.</p>
+            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-ink">Masuk ke MagangHub</h2>
+            <p class="mt-2 text-sm leading-6 text-ink-muted">Gunakan akun mahasiswa yang telah diberikan oleh administrator.</p>
 
             <div class="mt-8 flex flex-col gap-6">
                 <x-auth-session-status class="text-center" :status="session('status')" />

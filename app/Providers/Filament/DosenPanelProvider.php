@@ -6,6 +6,7 @@ use App\Filament\Auth\StaffLogin;
 use App\Filament\Dosen\Widgets\LecturerGuidanceStats;
 use App\Filament\Dosen\Widgets\PendingLecturerReports;
 use App\Http\Middleware\RequirePasswordChange;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,6 +29,7 @@ class DosenPanelProvider extends PanelProvider
         return $panel
             ->id('dosen')
             ->path('dosen')
+            ->defaultThemeMode(ThemeMode::System)
             ->brandName('MagangHub')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))

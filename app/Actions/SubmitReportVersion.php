@@ -35,15 +35,34 @@ class SubmitReportVersion
         }
 
         $path = 'reports/'.$student->id.'/'.$period->id.'/'.Str::uuid().'.'.$extension;
-        $written = false;
+        $disk = Storage::disk('local');
 
         try {
-            $written = Storage::disk('local')->putFileAs(dirname($path), $file, basename($path)) !== false;
-            if (! $written) {
+            $temporaryPath = $file->getRealPath();
+
+            if (! is_string($temporaryPath)) {
+                throw new \RuntimeException('Report file checksum could not be calculated.');
+            }
+
+            $checksum = hash_file('sha256', $temporaryPath);
+
+            if (! is_string($checksum)) {
+                throw new \RuntimeException('Report file checksum could not be calculated.');
+            }
+
+            $storedPath = $disk->putFileAs(dirname($path), $file, basename($path));
+
+            if ($storedPath !== $path || ! $disk->exists($path)) {
                 throw new \RuntimeException('Report file could not be stored.');
             }
 
-            $result = DB::transaction(function () use ($student, $period, $file, $note, $extension, $mimeType, $path): array {
+            $storedContents = $disk->get($path);
+
+            if (! is_string($storedContents) || strlen($storedContents) !== $file->getSize() || ! hash_equals($checksum, hash('sha256', $storedContents))) {
+                throw new \RuntimeException('Stored report file failed integrity verification.');
+            }
+
+            $result = DB::transaction(function () use ($student, $period, $file, $note, $extension, $mimeType, $path, $checksum): array {
                 $lockedPeriod = ReportPeriod::query()->whereKey($period->id)->lockForUpdate()->firstOrFail();
                 abort_if($lockedPeriod->internship->student_id !== $student->id, 403);
 
@@ -68,7 +87,7 @@ class SubmitReportVersion
                     'extension' => $extension,
                     'mime_type' => $mimeType,
                     'size_bytes' => $file->getSize(),
-                    'checksum_sha256' => hash_file('sha256', $file->getRealPath()),
+                    'checksum_sha256' => $checksum,
                     'student_note' => $note,
                     'submitted_at' => now(),
                     'is_late' => now()->greaterThan($lockedPeriod->due_at),
@@ -78,8 +97,8 @@ class SubmitReportVersion
                 return ['report' => $report, 'version' => $version];
             });
         } catch (Throwable $exception) {
-            if ($written) {
-                Storage::disk('local')->delete($path);
+            if ($disk->exists($path)) {
+                $disk->delete($path);
             }
 
             throw $exception;

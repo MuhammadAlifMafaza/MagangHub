@@ -22,7 +22,16 @@
                                 <span aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg {{ $loop->last ? 'bg-primary-50 text-primary-700' : 'bg-neutral-bg text-neutral' }}"><flux:icon.document variant="outline" class="size-5" /></span>
                                 <div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h3 class="font-semibold text-ink">Versi {{ $version->version_number }}</h3>@if ($loop->last)<span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700">Terbaru</span>@endif @if ($version->is_late)<x-ui.status-badge label="Terlambat" tone="danger" />@endif</div><p class="mt-1 break-all text-sm font-medium text-ink">{{ $version->original_name }}</p><p class="mt-1 text-xs text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB <span aria-hidden="true">·</span> @if ($version->size_bytes < 1024) {{ number_format($version->size_bytes) }} byte @else {{ number_format($version->size_bytes / 1024, $version->size_bytes < 10240 ? 1 : 0, ',', '.') }} KB @endif</p>@if ($version->student_note)<p class="mt-3 whitespace-pre-line text-sm leading-6 text-ink-muted"><span class="font-medium text-ink">Catatan Anda:</span> {{ $version->student_note }}</p>@endif</div>
                             </div>
-                            <a href="{{ route('laporan.versi.download', $version) }}" class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
+                            <div class="flex shrink-0 flex-wrap gap-2">
+                                @if ($fileAvailability->get($version->getKey(), false))
+                                    @if ($version->mime_type === 'application/pdf')
+                                        <a href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
+                                    @endif
+                                    <a href="{{ route('laporan.versi.download', $version) }}" class="inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
+                                @else
+                                    <p role="status" class="max-w-sm rounded-lg border border-warning/20 bg-warning-bg px-3 py-2 text-sm leading-5 text-warning">Berkas belum tersedia di penyimpanan. Hubungi administrator untuk pemulihan.</p>
+                                @endif
+                            </div>
                         </div>
                         @if ($version->review)
                             <div class="ml-12 mt-4 rounded-xl border border-info/20 bg-info-bg/50 p-4 sm:ml-12">
@@ -60,10 +69,14 @@
                 <li class="flex flex-col gap-3 py-4 sm:flex-row sm:items-start sm:justify-between">
                     <div class="min-w-0"><h3 class="font-semibold">Versi {{ $version->version_number }}@if ($loop->last) <span class="text-sm font-normal text-ink-muted">(terbaru)</span>@endif</h3><p class="mt-1 break-all text-sm text-ink">{{ $version->original_name }}</p><p class="mt-1 text-sm text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB · {{ number_format($version->size_bytes / 1024, 0) }} KB</p>@if ($version->review)<div class="mt-3 rounded-xl bg-bg p-3"><p class="text-sm font-medium">{{ $version->review->decision->label() }}</p><p class="mt-1 whitespace-pre-line text-sm leading-6 text-ink-muted">{{ $version->review->feedback ?: 'Tidak ada catatan tambahan.' }}</p></div>@endif</div>
                     <div class="flex shrink-0 flex-wrap gap-2">
-                        @if ($version->mime_type === 'application/pdf')
-                            <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener">Baca PDF</a>
+                        @if ($fileAvailability->get($version->getKey(), false))
+                            @if ($version->mime_type === 'application/pdf')
+                                <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener">Baca PDF</a>
+                            @endif
+                            <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.download', $version) }}">Unduh berkas</a>
+                        @else
+                            <p role="status" class="max-w-sm rounded-lg border border-warning/20 bg-warning-bg px-3 py-2 text-sm leading-5 text-warning">Berkas belum tersedia di penyimpanan. Hubungi administrator untuk pemulihan.</p>
                         @endif
-                        <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.download', $version) }}">Unduh berkas</a>
                     </div>
                 </li>
             @endforeach
@@ -96,7 +109,7 @@
 </main>
 @else
 <main class="mx-auto max-w-5xl space-y-6 p-6 text-ink"><h1 class="text-2xl font-semibold">Laporan · Minggu ke-{{ $report->reportPeriod->week_number }}</h1><p>Status pemeriksaan: {{ $report->review_status->label() }}</p>
-    @foreach($report->versions as $version)<article class="space-y-2 rounded-lg border border-line bg-surface p-4"><h2 class="font-semibold">Versi {{ $version->version_number }} · {{ $version->original_name }}</h2><p class="text-sm text-ink-muted">{{ $version->submitted_at->translatedFormat('d M Y, H:i') }} WIB · {{ $version->size_bytes }} byte</p><a class="text-primary-700 underline" href="{{ route('laporan.versi.download', $version) }}">Unduh berkas</a></article>@endforeach
+    @foreach($report->versions as $version)<article class="space-y-2 rounded-lg border border-line bg-surface p-4"><h2 class="font-semibold">Versi {{ $version->version_number }} · {{ $version->original_name }}</h2><p class="text-sm text-ink-muted">{{ $version->submitted_at->translatedFormat('d M Y, H:i') }} WIB · {{ $version->size_bytes }} byte</p>@if ($fileAvailability->get($version->getKey(), false))<a class="text-primary-700 underline" href="{{ route('laporan.versi.download', $version) }}">Unduh berkas</a>@else<p role="status" class="text-sm text-warning">Berkas belum tersedia di penyimpanan. Hubungi administrator untuk pemulihan.</p>@endif</article>@endforeach
 </main>
 @endif
 @endif

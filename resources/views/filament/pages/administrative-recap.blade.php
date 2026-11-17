@@ -42,9 +42,9 @@
         </x-filament::section>
 
         <x-filament::section heading="Pengumpulan Laporan per Mahasiswa dan Minggu">
-            <div class="overflow-x-auto">
-                <table class="w-full text-start text-sm">
-                    <thead><tr class="border-b text-gray-700 dark:text-gray-300"><th scope="col" class="px-3 py-2">Mahasiswa</th><th scope="col" class="px-3 py-2">Dosen Pembimbing</th><th scope="col" class="px-3 py-2">Minggu</th><th scope="col" class="px-3 py-2">Pengumpulan</th><th scope="col" class="px-3 py-2">Pemeriksaan</th><th scope="col" class="px-3 py-2">Penilaian</th><th scope="col" class="px-3 py-2">Laporan</th></tr></thead>
+            <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                <table class="min-w-[68rem] w-full text-start text-sm">
+                    <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:bg-gray-800/70 dark:text-gray-300"><tr class="border-b border-gray-200 dark:border-gray-700"><th scope="col" class="whitespace-nowrap px-4 py-3">Mahasiswa</th><th scope="col" class="whitespace-nowrap px-4 py-3">Dosen Pembimbing</th><th scope="col" class="whitespace-nowrap px-4 py-3">Minggu</th><th scope="col" class="whitespace-nowrap px-4 py-3">Pengumpulan</th><th scope="col" class="whitespace-nowrap px-4 py-3">Pemeriksaan</th><th scope="col" class="whitespace-nowrap px-4 py-3">Penilaian</th><th scope="col" class="whitespace-nowrap px-4 py-3">Laporan</th></tr></thead>
                     <tbody>
                         @forelse ($periods as $period)
                             @php
@@ -60,17 +60,17 @@
                                     'gray' => 'bg-neutral-bg text-neutral',
                                 ];
                             @endphp
-                            <tr class="border-b border-gray-200 dark:border-gray-700">
-                                <td class="px-3 py-2">{{ $period->internship->student->user->name }}</td>
-                                <td class="px-3 py-2">{{ $assignment?->lecturer?->user?->name ?? '—' }}</td>
-                                <td class="px-3 py-2">Minggu ke-{{ $period->week_number }}</td>
-                                <td class="px-3 py-2"><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium {{ $statusBadgeClasses[$collectionStatus->color()] }}">{{ $collectionStatus->label() }}</span></td>
-                                <td class="px-3 py-2">{{ $report?->review_status?->label() ?? '—' }}</td>
-                                <td class="px-3 py-2">{{ $report?->assessment?->status?->label() ?? 'Belum dinilai' }}</td>
-                                <td class="px-3 py-2">@if ($report)<a class="font-medium text-primary-700 underline focus-visible:outline-2 focus-visible:outline-offset-2" href="{{ route('laporan.show', $report) }}">Detail</a>@if ($report->latestVersion)<span aria-hidden="true"> · </span><a class="font-medium text-primary-700 underline focus-visible:outline-2 focus-visible:outline-offset-2" href="{{ route('laporan.versi.download', $report->latestVersion) }}">Unduh terbaru</a>@endif @else — @endif</td>
+                            <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50/80 dark:border-gray-700 dark:hover:bg-white/5">
+                                <td class="whitespace-nowrap px-4 py-3 font-medium">{{ $period->internship->student->user->name }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ $assignment?->lecturer?->user?->name ?? '—' }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">Minggu ke-{{ $period->week_number }}</td>
+                                <td class="whitespace-nowrap px-4 py-3"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $statusBadgeClasses[$collectionStatus->color()] }}">{{ $collectionStatus->label() }}</span></td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ $report?->review_status?->label() ?? '—' }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ $report?->assessment?->status?->label() ?? 'Belum dinilai' }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">@if ($report)<a class="font-medium text-primary-700 underline focus-visible:outline-2 focus-visible:outline-offset-2" href="{{ route('laporan.show', $report) }}">Detail</a>@if ($report->latestVersion)<span aria-hidden="true"> · </span><a class="font-medium text-primary-700 underline focus-visible:outline-2 focus-visible:outline-offset-2" href="{{ route('laporan.versi.download', $report->latestVersion) }}">Unduh terbaru</a>@endif @else — @endif</td>
                             </tr>
                         @empty
-                            <tr><td colspan="7" class="px-3 py-6 text-center text-gray-600 dark:text-gray-300">Tidak ada data laporan untuk filter ini.</td></tr>
+                            <tr><td colspan="7" class="px-4 py-8 text-center text-gray-600 dark:text-gray-300">Tidak ada data laporan untuk filter ini.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -79,12 +79,12 @@
         </x-filament::section>
 
         <x-filament::section heading="Pembimbingan per Dosen">
-            <div class="overflow-x-auto">
-                <table class="w-full text-start text-sm">
-                    <thead><tr class="border-b text-gray-700 dark:text-gray-300"><th scope="col" class="px-3 py-2">Dosen</th><th scope="col" class="px-3 py-2">Jumlah Slot</th><th scope="col" class="px-3 py-2">Terisi</th><th scope="col" class="px-3 py-2">Selesai</th><th scope="col" class="px-3 py-2">Tidak Hadir</th></tr></thead>
+            <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                <table class="min-w-[40rem] w-full text-start text-sm">
+                    <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:bg-gray-800/70 dark:text-gray-300"><tr class="border-b border-gray-200 dark:border-gray-700"><th scope="col" class="px-4 py-3">Dosen</th><th scope="col" class="px-4 py-3">Jumlah Slot</th><th scope="col" class="px-4 py-3">Terisi</th><th scope="col" class="px-4 py-3">Selesai</th><th scope="col" class="px-4 py-3">Tidak Hadir</th></tr></thead>
                     <tbody>
                         @foreach ($guidanceCounts as $row)
-                            <tr class="border-b border-gray-200 dark:border-gray-700"><td class="px-3 py-2">{{ $row['lecturer']->user->name }}</td><td class="px-3 py-2 tabular-nums">{{ $row['slots'] }}</td><td class="px-3 py-2 tabular-nums">{{ $row['booked'] }}</td><td class="px-3 py-2 tabular-nums">{{ $row['completed'] }}</td><td class="px-3 py-2 tabular-nums">{{ $row['no_show'] }}</td></tr>
+                            <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50/80 dark:border-gray-700 dark:hover:bg-white/5"><td class="px-4 py-3 font-medium">{{ $row['lecturer']->user->name }}</td><td class="px-4 py-3 tabular-nums">{{ $row['slots'] }}</td><td class="px-4 py-3 tabular-nums">{{ $row['booked'] }}</td><td class="px-4 py-3 tabular-nums">{{ $row['completed'] }}</td><td class="px-4 py-3 tabular-nums">{{ $row['no_show'] }}</td></tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -93,31 +93,35 @@
 
         <x-filament::section heading="Pemeriksaan dan Penilaian per Dosen">
             <div class="grid gap-6 xl:grid-cols-2">
-                <div class="overflow-x-auto">
+                <div>
                     <h3 class="mb-2 font-semibold">Pemeriksaan</h3>
-                    <table class="w-full text-start text-sm">
-                        <thead><tr class="border-b text-gray-700 dark:text-gray-300"><th scope="col" class="px-3 py-2">Dosen</th><th scope="col" class="px-3 py-2">Keputusan</th><th scope="col" class="px-3 py-2">Jumlah</th></tr></thead>
-                        <tbody>
-                            @forelse ($reviewCounts as $row)
-                                <tr class="border-b border-gray-200 dark:border-gray-700"><td class="px-3 py-2">{{ $row->lecturer_name }}</td><td class="px-3 py-2">{{ $row->review_status->label() }}</td><td class="px-3 py-2 tabular-nums">{{ $row->total }}</td></tr>
-                            @empty
-                                <tr><td colspan="3" class="px-3 py-4 text-gray-600 dark:text-gray-300">Belum ada pemeriksaan pada filter ini.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                        <table class="min-w-[32rem] w-full text-start text-sm">
+                            <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:bg-gray-800/70 dark:text-gray-300"><tr class="border-b border-gray-200 dark:border-gray-700"><th scope="col" class="px-4 py-3">Dosen</th><th scope="col" class="px-4 py-3">Keputusan</th><th scope="col" class="px-4 py-3">Jumlah</th></tr></thead>
+                            <tbody>
+                                @forelse ($reviewCounts as $row)
+                                    <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50/80 dark:border-gray-700 dark:hover:bg-white/5"><td class="px-4 py-3 font-medium">{{ $row->lecturer_name }}</td><td class="px-4 py-3">{{ $row->review_status->label() }}</td><td class="px-4 py-3 tabular-nums">{{ $row->total }}</td></tr>
+                                @empty
+                                    <tr><td colspan="3" class="px-4 py-6 text-gray-600 dark:text-gray-300">Belum ada pemeriksaan pada filter ini.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
+                <div>
                     <h3 class="mb-2 font-semibold">Penilaian</h3>
-                    <table class="w-full text-start text-sm">
-                        <thead><tr class="border-b text-gray-700 dark:text-gray-300"><th scope="col" class="px-3 py-2">Dosen</th><th scope="col" class="px-3 py-2">Status</th><th scope="col" class="px-3 py-2">Jumlah</th></tr></thead>
-                        <tbody>
-                            @forelse ($assessmentCounts as $row)
-                                <tr class="border-b border-gray-200 dark:border-gray-700"><td class="px-3 py-2">{{ $row->lecturer->user->name }}</td><td class="px-3 py-2">{{ $row->status->label() }}</td><td class="px-3 py-2 tabular-nums">{{ $row->total }}</td></tr>
-                            @empty
-                                <tr><td colspan="3" class="px-3 py-4 text-gray-600 dark:text-gray-300">Belum ada penilaian pada filter ini.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                        <table class="min-w-[32rem] w-full text-start text-sm">
+                            <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:bg-gray-800/70 dark:text-gray-300"><tr class="border-b border-gray-200 dark:border-gray-700"><th scope="col" class="px-4 py-3">Dosen</th><th scope="col" class="px-4 py-3">Status</th><th scope="col" class="px-4 py-3">Jumlah</th></tr></thead>
+                            <tbody>
+                                @forelse ($assessmentCounts as $row)
+                                    <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50/80 dark:border-gray-700 dark:hover:bg-white/5"><td class="px-4 py-3 font-medium">{{ $row->lecturer->user->name }}</td><td class="px-4 py-3">{{ $row->status->label() }}</td><td class="px-4 py-3 tabular-nums">{{ $row->total }}</td></tr>
+                                @empty
+                                    <tr><td colspan="3" class="px-4 py-6 text-gray-600 dark:text-gray-300">Belum ada penilaian pada filter ini.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </x-filament::section>

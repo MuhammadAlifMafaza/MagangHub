@@ -4,19 +4,19 @@
         <x-slot name="description">Statistik untuk mahasiswa dan aktivitas yang berada dalam bimbingan Anda.</x-slot>
 
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <article class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <p class="text-sm text-gray-600 dark:text-gray-300">Mahasiswa bimbingan aktif</p>
                 <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ number_format($stats['active_students']) }}</p>
             </article>
-            <article class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <p class="text-sm text-gray-600 dark:text-gray-300">Slot mendatang</p>
                 <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ number_format($stats['upcoming_slots']) }}</p>
             </article>
-            <article class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <p class="text-sm text-gray-600 dark:text-gray-300">Pemesanan mendatang</p>
                 <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ number_format($stats['upcoming_bookings']) }}</p>
             </article>
-            <article class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <article class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
                 <p class="text-sm text-gray-600 dark:text-gray-300">Penilaian draf</p>
                 <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ number_format($stats['draft_assessments']) }}</p>
             </article>

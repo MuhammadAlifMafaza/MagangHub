@@ -10,9 +10,10 @@
         <link rel="shortcut icon" href="{{ asset('images/brand/Logo.svg') }}" type="image/svg+xml">
         <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @fluxAppearance
     </head>
-    <body class="min-h-screen bg-white font-sans text-ink antialiased">
-        <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-3 focus:text-primary-700 focus:shadow-lg">Lewati ke konten utama</a>
+    <body class="min-h-screen bg-bg font-sans text-ink antialiased">
+        <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-3 focus:text-primary-700 focus:shadow-lg">Lewati ke konten utama</a>
 
         <header class="sticky top-0 z-40 border-b border-line bg-surface/95 shadow-sm backdrop-blur">
             <nav aria-label="Navigasi utama" class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">

@@ -4,6 +4,45 @@
 @source '../../../../resources/views/filament/**/*';
 
 @layer components {
+    .fi-body,
+    .fi-main-ctn {
+        background-color: var(--magang-panel-bg, #f4f7fb);
+    }
+
+    .dark .fi-body,
+    .dark .fi-main-ctn {
+        background-color: var(--magang-panel-bg, #0e1725);
+    }
+
+    .fi-sidebar,
+    .fi-topbar {
+        border-color: var(--magang-panel-border, #dfe7f0);
+        background-color: var(--magang-panel-surface, #ffffff);
+    }
+
+    .dark .fi-sidebar,
+    .dark .fi-topbar {
+        border-color: var(--magang-panel-border, #34465d);
+        background-color: var(--magang-panel-surface, #162335);
+    }
+
+    .fi-section:not(.fi-section-not-contained),
+    .fi-ta-ctn {
+        border: 1px solid var(--magang-panel-border, #dfe7f0);
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgb(15 23 42 / 0.05);
+    }
+
+    .dark .fi-section:not(.fi-section-not-contained),
+    .dark .fi-ta-ctn {
+        border-color: var(--magang-panel-border, #34465d);
+        box-shadow: 0 1px 3px rgb(0 0 0 / 0.18);
+    }
+
+    .fi-ta-content-ctn {
+        scrollbar-gutter: stable;
+    }
+
     .fi-simple-page {
         width: 100%;
     }
@@ -21,6 +60,14 @@
 
     .staff-login-brand {
         background: linear-gradient(145deg, #1c3155 0%, #293f63 65%, #344f78 100%);
+    }
+
+    .fi-simple-main:has(.staff-login-brand) {
+        color-scheme: light;
+    }
+
+    .dark .fi-simple-main:has(.staff-login-brand) {
+        color-scheme: dark;
     }
 
     .fi-simple-main:has(.staff-login-brand) {
@@ -44,5 +91,25 @@
         .staff-login-form {
             margin-top: 1.5rem;
         }
+    }
+}
+
+html.fi {
+    color-scheme: light;
+    --magang-panel-bg: #f4f7fb;
+    --magang-panel-surface: #ffffff;
+    --magang-panel-border: #dfe7f0;
+}
+
+html.fi.dark {
+    color-scheme: dark;
+    --magang-panel-bg: #0e1725;
+    --magang-panel-surface: #162335;
+    --magang-panel-border: #34465d;
+}
+
+@layer utilities {
+    .dark .fi-simple-page-content > div:has(.staff-login-brand) {
+        background-color: #162335;
     }
 }

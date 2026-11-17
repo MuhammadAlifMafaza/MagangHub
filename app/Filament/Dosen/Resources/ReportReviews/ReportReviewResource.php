@@ -10,6 +10,7 @@ use App\Enums\ReportReviewDecision;
 use App\Enums\ReviewStatus;
 use App\Filament\Dosen\Resources\ReportReviews\Pages\ListReportReviews;
 use App\Models\Assessment;
+use App\Models\ReportVersion;
 use App\Models\WeeklyReport;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -24,6 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class ReportReviewResource extends Resource
 {
@@ -63,6 +65,11 @@ class ReportReviewResource extends Resource
                 TextColumn::make('reportPeriod.week_number')->label('Minggu')->sortable(),
                 TextColumn::make('latestVersion.submitted_at')->label('Dikirim')->dateTime('d M Y, H:i')->sortable(),
                 TextColumn::make('latestVersion.original_name')->label('Berkas')->limit(35),
+                TextColumn::make('latestVersion.id')->label('Status berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => match (true) {
+                    $record->latestVersion === null => 'Belum ada berkas laporan.',
+                    ! self::hasStoredLatestVersion($record) => 'Berkas fisik tidak ditemukan. Hubungi administrator untuk pemulihan.',
+                    default => 'Tersedia',
+                }),
             ])
             ->filters([
                 SelectFilter::make('week_number')->label('Minggu')->options(fn (): array => WeeklyReport::query()
@@ -84,15 +91,21 @@ class ReportReviewResource extends Resource
                         TextEntry::make('latestVersion.original_name')->label('Berkas terbaru'),
                         TextEntry::make('latestVersion.submitted_at')->label('Dikirim')->dateTime('d M Y, H:i'),
                         TextEntry::make('latestVersion.student_note')->label('Catatan mahasiswa')->placeholder('—'),
-                        TextEntry::make('latestVersion.id')->label('Baca dokumen')->formatStateUsing(fn ($state, WeeklyReport $record): string => match (true) {
-                            $record->latestVersion === null => 'Tidak tersedia',
-                            $record->latestVersion->mime_type === 'application/pdf' => 'Buka PDF di tab baru',
-                            default => 'Unduh berkas untuk membacanya.',
+                        TextEntry::make('latestVersion.id')->label('Status berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => match (true) {
+                            $record->latestVersion === null => 'Belum ada berkas laporan.',
+                            ! self::hasStoredLatestVersion($record) => 'Berkas fisik tidak ditemukan. Hubungi administrator untuk pemulihan.',
+                            $record->latestVersion->mime_type === 'application/pdf' => 'PDF tersedia untuk dibaca dan diunduh.',
+                            default => 'Dokumen tersedia untuk diunduh.',
+                        }),
+                        TextEntry::make('latestVersion.id')->label('Baca PDF')->formatStateUsing(fn ($state, WeeklyReport $record): string => match (true) {
+                            ! self::hasStoredLatestVersion($record) => 'Berkas tidak tersedia',
+                            $record->latestVersion?->mime_type === 'application/pdf' => 'Buka PDF di tab baru',
+                            default => 'Pratinjau hanya tersedia untuk PDF.',
                         })
-                            ->url(fn ($state, WeeklyReport $record): ?string => $record->latestVersion?->mime_type === 'application/pdf' ? route('laporan.versi.preview', $record->latestVersion) : null)
+                            ->url(fn ($state, WeeklyReport $record): ?string => self::hasStoredLatestVersion($record) && $record->latestVersion?->mime_type === 'application/pdf' ? route('laporan.versi.preview', $record->latestVersion) : null)
                             ->openUrlInNewTab(),
-                        TextEntry::make('latestVersion.id')->label('Unduh berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => $record->latestVersion ? 'Unduh versi terbaru' : 'Tidak tersedia')
-                            ->url(fn ($state, WeeklyReport $record): ?string => $record->latestVersion ? route('laporan.versi.download', $record->latestVersion) : null),
+                        TextEntry::make('latestVersion.id')->label('Unduh berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => self::hasStoredLatestVersion($record) ? 'Unduh versi terbaru' : 'Berkas tidak tersedia')
+                            ->url(fn ($state, WeeklyReport $record): ?string => self::hasStoredLatestVersion($record) ? route('laporan.versi.download', $record->latestVersion) : null),
                     ])->modalHeading('Detail pemeriksaan laporan')->modalWidth('3xl')->modalSubmitAction(false)->modalCancelActionLabel('Tutup'),
                 Action::make('decision')
                     ->label('Beri Keputusan')
@@ -155,6 +168,19 @@ class ReportReviewResource extends Resource
             ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn (Builder $query): Builder => $query
                 ->where('lecturer_id', $lecturer->id)->where('status', 'active'))
             ->with(['reportPeriod.internship.student.user', 'latestVersion', 'assessment']);
+    }
+
+    private static function hasStoredLatestVersion(WeeklyReport $report): bool
+    {
+        $version = $report->latestVersion;
+
+        if (! $version instanceof ReportVersion) {
+            return false;
+        }
+
+        $disk = Storage::disk($version->disk);
+
+        return $disk->exists($version->stored_path) && $disk->size($version->stored_path) === $version->size_bytes;
     }
 
     public static function getPages(): array

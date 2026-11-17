@@ -15,7 +15,7 @@
             <div class="mb-8 lg:hidden">
                 <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-10 w-auto">
             </div>
-            <p class="text-sm font-semibold text-primary-700">{{ filament()->getCurrentPanel()->getId() === 'dosen' ? 'Panel dosen' : 'Panel administrator' }}</p>
+            <p class="text-sm font-semibold text-primary-700 dark:text-primary-300">{{ filament()->getCurrentPanel()->getId() === 'dosen' ? 'Panel dosen' : 'Panel administrator' }}</p>
             <h2 class="mt-2 text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ $this->getHeading() }}</h2>
             <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">{{ $this->getSubheading() }}</p>
 
@@ -24,7 +24,7 @@
             </div>
 
             <div class="mt-6 flex flex-col items-start gap-3 text-sm xl:flex-row xl:items-center xl:justify-between">
-                <a href="{{ route('password.request', ['audience' => 'staff', 'panel' => filament()->getCurrentPanel()->getId()]) }}" class="font-medium text-primary-700 underline underline-offset-4">Lupa kata sandi?</a>
+                <a href="{{ route('password.request', ['audience' => 'staff', 'panel' => filament()->getCurrentPanel()->getId()]) }}" class="font-medium text-primary-700 underline underline-offset-4 dark:text-primary-300">Lupa kata sandi?</a>
             </div>
         </section>
     </div>
