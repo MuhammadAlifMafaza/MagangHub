@@ -22,6 +22,9 @@
 /storage/pail
 /vendor
 /tests/*
+!/tests/Feature/
+/tests/Feature/*
+!/tests/Feature/AdministrativeRecapTest.php
 _ide_helper.php
 Homestead.json
 Homestead.yaml

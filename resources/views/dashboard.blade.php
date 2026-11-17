@@ -14,7 +14,7 @@
                     <p class="max-w-xl text-sm leading-6 text-white/85 sm:text-base">Pantau progres magang, laporan mingguan, dan jadwal bimbingan Anda dari satu tempat.</p>
                 </div>
                 @if ($currentPeriod)
-                    <a href="{{ $currentPeriod->weeklyReport ? route('laporan.show', $currentPeriod->weeklyReport) : route('mahasiswa.laporan.index') }}" class="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary-700 shadow-sm transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:self-auto">
+                    <a href="{{ $currentPeriod->weeklyReport ? route('mahasiswa.laporan.show', $currentPeriod->weeklyReport) : route('mahasiswa.laporan.index') }}" class="inline-flex min-h-11 items-center justify-center gap-2 self-start rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary-700 shadow-sm transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:self-auto">
                         {{ $currentPeriod->weeklyReport ? 'Lihat laporan aktif' : 'Mulai laporan minggu ini' }}
                         <flux:icon.arrow-right variant="outline" class="size-4" />
                     </a>
@@ -38,7 +38,7 @@
                                 <p class="font-medium text-ink">Laporan · Minggu ke-{{ $report->reportPeriod->week_number }}</p>
                                 <p class="mt-1 text-sm text-ink-muted">Baca umpan balik dosen dan unggah versi revisi.</p>
                             </div>
-                            <a href="{{ route('laporan.show', $report) }}" class="inline-flex min-h-10 items-center gap-2 self-start text-sm font-semibold text-primary-700 underline underline-offset-4 hover:text-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 sm:self-auto">
+                            <a href="{{ route('mahasiswa.laporan.show', $report) }}" class="inline-flex min-h-10 items-center gap-2 self-start text-sm font-semibold text-primary-700 underline underline-offset-4 hover:text-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700 sm:self-auto">
                                 Tinjau umpan balik <flux:icon.arrow-right variant="outline" class="size-4" />
                             </a>
                         </div>
@@ -60,7 +60,7 @@
                     </div>
                     <p class="mt-1 text-sm text-ink-muted">{{ $currentPeriod->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $currentPeriod->ends_on->locale('id')->translatedFormat('d M Y') }}</p>
                     <p class="mt-1 text-sm text-ink-muted">Batas pengumpulan {{ $currentPeriod->due_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB</p>
-                    <a href="{{ $currentPeriod->weeklyReport ? route('laporan.show', $currentPeriod->weeklyReport) : route('mahasiswa.laporan.index') }}" class="mt-4 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary-700 underline underline-offset-4 hover:text-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">
+                    <a href="{{ $currentPeriod->weeklyReport ? route('mahasiswa.laporan.show', $currentPeriod->weeklyReport) : route('mahasiswa.laporan.index') }}" class="mt-4 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary-700 underline underline-offset-4 hover:text-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">
                         {{ $currentPeriod->weeklyReport ? 'Lihat laporan periode ini' : 'Buka daftar periode' }}
                         <flux:icon.arrow-right variant="outline" class="size-4" />
                     </a>

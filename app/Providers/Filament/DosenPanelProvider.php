@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Auth\StaffLogin;
 use App\Filament\Dosen\Widgets\LecturerGuidanceStats;
 use App\Filament\Dosen\Widgets\PendingLecturerReports;
+use App\Filament\Pages\ReportDetails;
 use App\Http\Middleware\RequirePasswordChange;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -33,7 +34,7 @@ class DosenPanelProvider extends PanelProvider
             ->brandName('MagangHub')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))
-            ->brandLogoHeight('2.5rem')
+            ->brandLogoHeight('2.8rem')
             ->favicon(asset('images/brand/Logo.svg'))
             ->login(StaffLogin::class)
             ->strictAuthorization()
@@ -49,6 +50,7 @@ class DosenPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Dosen/Pages'), for: 'App\Filament\Dosen\Pages')
             ->pages([
                 Dashboard::class,
+                ReportDetails::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Dosen/Widgets'), for: 'App\Filament\Dosen\Widgets')
             ->widgets([

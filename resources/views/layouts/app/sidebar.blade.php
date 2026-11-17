@@ -23,7 +23,7 @@
                             <flux:icon.calendar-days variant="outline" class="size-5 shrink-0" />
                             <span>Jadwal Pembimbingan</span>
                         </a>
-                        <a href="{{ route('mahasiswa.laporan.index') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! (request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show'))]) @if (request()->routeIs('mahasiswa.laporan.*') || request()->routeIs('laporan.show')) aria-current="page" @endif wire:navigate>
+                        <a href="{{ route('mahasiswa.laporan.index') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('mahasiswa.laporan.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('mahasiswa.laporan.*')]) @if (request()->routeIs('mahasiswa.laporan.*')) aria-current="page" @endif wire:navigate>
                             <flux:icon.document-text variant="outline" class="size-5 shrink-0" />
                             <span>Laporan Mingguan</span>
                         </a>

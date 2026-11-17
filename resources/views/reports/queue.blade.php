@@ -20,7 +20,7 @@
                     </div>
                     <div class="flex items-center justify-between gap-3 sm:justify-end">
                         <x-ui.status-badge label="Menunggu pemeriksaan" tone="warning" />
-                        <a class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.show', $report) }}">
+                        <a class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ \App\Filament\Pages\ReportDetails::getUrl(['report' => $report], panel: 'dosen') }}">
                             Periksa
                             <flux:icon.arrow-right variant="outline" class="size-4" />
                         </a>

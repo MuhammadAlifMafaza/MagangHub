@@ -87,7 +87,7 @@
                                     <span class="font-medium text-ink-muted">Pemeriksaan</span>
                                     <span class="font-semibold text-ink">{{ $report->review_status->label() }}</span>
                                     <span class="hidden text-line sm:inline" aria-hidden="true">|</span>
-                                    <a class="inline-flex min-h-10 items-center gap-2 font-semibold text-primary-700 underline decoration-primary-700/40 underline-offset-4 hover:text-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.show', $report) }}"><flux:icon.clock variant="outline" class="size-4" />Riwayat, umpan balik, dan berkas</a>
+                                    <a class="inline-flex min-h-10 items-center gap-2 font-semibold text-primary-700 underline decoration-primary-700/40 underline-offset-4 hover:text-primary-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('mahasiswa.laporan.show', $report) }}"><flux:icon.clock variant="outline" class="size-4" />Riwayat, umpan balik, dan berkas</a>
                                 </div>
 
                                 @if ($report->assessment?->status?->value === 'published')

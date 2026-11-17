@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     Route::get('/mahasiswa/laporan', [ReportController::class, 'periods'])->name('mahasiswa.laporan.index');
     Route::post('/mahasiswa/laporan/periode/{period}', [ReportController::class, 'submit'])->name('mahasiswa.laporan.store');
+    Route::get('/mahasiswa/laporan/{report}', [ReportController::class, 'studentShow'])->name('mahasiswa.laporan.show');
     Route::get('/laporan/{report}', [ReportController::class, 'show'])->name('laporan.show');
     Route::get('/laporan/versi/{version}/unduh', [ReportController::class, 'download'])->name('laporan.versi.download');
     Route::get('/laporan/versi/{version}/baca', [ReportController::class, 'preview'])->name('laporan.versi.preview');

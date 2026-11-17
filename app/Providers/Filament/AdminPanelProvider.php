@@ -3,7 +3,10 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\StaffLogin;
+use App\Filament\Widgets\AdminLecturerReviewActivityChart;
 use App\Filament\Widgets\AdminOverviewStats;
+use App\Filament\Widgets\AdminPendingReportReviews;
+use App\Filament\Widgets\AdminReportSubmissionTrendChart;
 use App\Http\Middleware\RequirePasswordChange;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -34,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandName('MagangHub')
             ->brandLogo(asset('images/brand/MagangHub-Logo-tag.svg'))
-            ->brandLogoHeight('2.5rem')
+            ->brandLogoHeight('2.8rem')
             ->favicon(asset('images/brand/Logo.svg'))
             ->login(StaffLogin::class)
             ->strictAuthorization()
@@ -55,6 +58,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 // AccountWidget::class,
                 AdminOverviewStats::class,
+                AdminPendingReportReviews::class,
+                AdminReportSubmissionTrendChart::class,
+                AdminLecturerReviewActivityChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -22,7 +22,7 @@
                                 <td class="whitespace-nowrap px-4 py-3">Minggu ke-{{ $report->reportPeriod->week_number }}</td>
                                 <td class="whitespace-nowrap px-4 py-3">{{ $report->latestVersion?->submitted_at?->locale('id')->translatedFormat('d M Y, H:i') ?? 'Belum dikirim' }}</td>
                                 <td class="whitespace-nowrap px-4 py-3 text-end">
-                                    <a href="{{ route('laporan.show', $report) }}" class="font-medium text-primary-600 hover:underline dark:text-primary-400">Buka laporan</a>
+                                    <a href="{{ \App\Filament\Pages\ReportDetails::getUrl(['report' => $report], panel: 'dosen') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-400">Buka laporan</a>
                                 </td>
                             </tr>
                         @endforeach

@@ -9,6 +9,7 @@ use App\Enums\AssessmentStatus;
 use App\Enums\ReportReviewDecision;
 use App\Enums\ReviewStatus;
 use App\Filament\Dosen\Resources\ReportReviews\Pages\ListReportReviews;
+use App\Filament\Pages\ReportDetails;
 use App\Models\Assessment;
 use App\Models\ReportVersion;
 use App\Models\WeeklyReport;
@@ -64,12 +65,37 @@ class ReportReviewResource extends Resource
                 TextColumn::make('reportPeriod.internship.student.user.name')->label('Mahasiswa')->searchable()->sortable(),
                 TextColumn::make('reportPeriod.week_number')->label('Minggu')->sortable(),
                 TextColumn::make('latestVersion.submitted_at')->label('Dikirim')->dateTime('d M Y, H:i')->sortable(),
-                TextColumn::make('latestVersion.original_name')->label('Berkas')->limit(35),
-                TextColumn::make('latestVersion.id')->label('Status berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => match (true) {
-                    $record->latestVersion === null => 'Belum ada berkas laporan.',
-                    ! self::hasStoredLatestVersion($record) => 'Berkas fisik tidak ditemukan. Hubungi administrator untuk pemulihan.',
-                    default => 'Tersedia',
-                }),
+                TextColumn::make('latestVersion.original_name')
+                    ->label('Berkas terbaru')
+                    ->limit(32)
+                    ->tooltip(fn (?string $state): ?string => $state)
+                    ->placeholder('Belum ada berkas')
+                    ->url(fn (WeeklyReport $record): ?string => self::hasStoredLatestVersion($record)
+                        ? route($record->latestVersion->mime_type === 'application/pdf' ? 'laporan.versi.preview' : 'laporan.versi.download', $record->latestVersion)
+                        : null)
+                    ->openUrlInNewTab()
+                    ->color('primary'),
+                TextColumn::make('latestVersion.id')
+                    ->label('File tersedia')
+                    ->state(fn (WeeklyReport $record): string => match (true) {
+                        $record->latestVersion === null => 'Belum diunggah',
+                        ! self::hasStoredLatestVersion($record) => 'Tidak ditemukan',
+                        default => 'Tersedia',
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Tersedia' => 'success',
+                        'Tidak ditemukan' => 'danger',
+                        default => 'gray',
+                    })
+                    ->icon(fn (string $state): ?Heroicon => match ($state) {
+                        'Tersedia' => Heroicon::OutlinedCheckCircle,
+                        'Tidak ditemukan' => Heroicon::OutlinedExclamationTriangle,
+                        default => null,
+                    })
+                    ->description(fn (string $state): ?string => $state === 'Tidak ditemukan'
+                        ? 'Berkas fisik tidak ditemukan. Hubungi administrator untuk pemulihan.'
+                        : null),
             ])
             ->filters([
                 SelectFilter::make('week_number')->label('Minggu')->options(fn (): array => WeeklyReport::query()
@@ -81,6 +107,10 @@ class ReportReviewResource extends Resource
                         : $query),
             ])
             ->recordActions([
+                Action::make('open-details')
+                    ->label('Buka detail halaman')
+                    ->icon(Heroicon::OutlinedDocumentText)
+                    ->url(fn (WeeklyReport $record): string => ReportDetails::getUrl(['report' => $record], panel: 'dosen')),
                 Action::make('review')
                     ->label('Detail laporan')
                     ->icon(Heroicon::OutlinedClipboardDocumentCheck)
