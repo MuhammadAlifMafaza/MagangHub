@@ -3,7 +3,10 @@
         <x-slot name="heading">Laporan Menunggu Pemeriksaan</x-slot>
         <x-slot name="description">Laporan pada periode aktif yang perlu ditindaklanjuti oleh dosen pembimbing.</x-slot>
         <x-slot name="afterHeader">
-            <a href="{{ $recapUrl }}" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">Lihat rekap</a>
+            <a href="{{ $recapUrl }}" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">
+                <x-filament::icon icon="heroicon-o-chart-bar" class="me-1 inline-block h-4 w-4 align-text-bottom" aria-hidden="true" />
+                Lihat rekap
+            </a>
         </x-slot>
 
         @if ($reports->isEmpty())
@@ -28,7 +31,10 @@
                                 <td class="whitespace-nowrap px-3 py-2">Minggu ke-{{ $report->reportPeriod->week_number }}</td>
                                 <td class="whitespace-nowrap px-3 py-2">{{ $report->latestVersion?->submitted_at?->locale('id')->translatedFormat('d M Y, H:i') ?? 'Belum dikirim' }}</td>
                                 <td class="whitespace-nowrap px-3 py-2 text-end">
-                                    <a href="{{ \App\Filament\Pages\ReportDetails::getUrl(['report' => $report], panel: 'admin') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-400">Buka laporan</a>
+                                    <a href="{{ \App\Filament\Pages\ReportDetails::getUrl(['report' => $report], panel: 'admin') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-400">
+                                        <x-filament::icon icon="heroicon-o-document-text" class="me-1 inline-block h-4 w-4 align-text-bottom" aria-hidden="true" />
+                                        Buka laporan
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

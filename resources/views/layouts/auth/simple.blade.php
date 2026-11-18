@@ -13,7 +13,8 @@
             <div @class(['flex w-full flex-col gap-2', 'max-w-5xl' => $wide, 'max-w-sm' => ! $wide])>
                 @if (! $wide)
                     <a href="{{ route('home') }}" class="mb-1 flex items-center justify-center font-medium" aria-label="Kembali ke halaman utama MagangHub" wire:navigate>
-                        <img src="{{ asset('images/brand/Logo.svg') }}" alt="MagangHub" class="size-9">
+                        <img src="{{ asset('images/brand/Logo.svg') }}" alt="MagangHub" class="size-9 dark:hidden">
+                        <img src="{{ asset('images/brand/Logo-dark.svg') }}" alt="" aria-hidden="true" class="hidden size-9 dark:block">
                     </a>
                 @endif
                 <div class="flex flex-col gap-6">

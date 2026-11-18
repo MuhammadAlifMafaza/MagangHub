@@ -9,6 +9,7 @@ use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -50,12 +51,14 @@ class UsersTable
             ->recordActions([
                 Action::make('editProfile')
                     ->label('Ubah data')
+                    ->icon(Heroicon::OutlinedPencilSquare)
                     ->schema(fn (User $record): array => UserForm::editActionSchema($record))
                     ->fillForm(fn (User $record): array => UserForm::editActionData($record))
                     ->action(fn (User $record, array $data): User => app(UpdateAccount::class)
                         ->handle(auth()->user(), $record, $data)),
                 Action::make('toggleActive')
                     ->label(fn (User $record): string => $record->is_active ? 'Nonaktifkan akun' : 'Aktifkan akun')
+                    ->icon(fn (User $record): Heroicon => $record->is_active ? Heroicon::OutlinedUserMinus : Heroicon::OutlinedUserPlus)
                     ->color(fn (User $record): string => $record->is_active ? 'danger' : 'success')
                     ->visible(fn (User $record): bool => $record->id !== auth()->id())
                     ->requiresConfirmation()
@@ -65,6 +68,7 @@ class UsersTable
                     }),
                 Action::make('resetPassword')
                     ->label('Atur ulang kata sandi')
+                    ->icon(Heroicon::OutlinedKey)
                     ->schema([
                         TextInput::make('password')
                             ->label('Kata sandi sementara')

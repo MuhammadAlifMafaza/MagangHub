@@ -25,6 +25,8 @@
 !/tests/Feature/
 /tests/Feature/*
 !/tests/Feature/AdministrativeRecapTest.php
+!/tests/Feature/FilamentSearchTest.php
+!/tests/Feature/ReportPeriodsPageTest.php
 _ide_helper.php
 Homestead.json
 Homestead.yaml

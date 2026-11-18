@@ -3,7 +3,7 @@
         <aside class="staff-login-brand relative hidden min-w-0 flex-col justify-between overflow-hidden p-10 text-white lg:flex xl:p-12">
             <div aria-hidden="true" class="absolute -end-20 -top-20 size-72 rounded-full border-[36px] border-white/10"></div>
             <div class="relative">
-                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-12 w-auto rounded-lg bg-white px-3 py-2">
+                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-16 w-auto rounded-xl bg-white p-2">
                 <p class="mt-16 text-sm font-semibold uppercase tracking-[0.18em] text-white/70">Institut Widya Pratama Pekalongan</p>
                 <h1 class="mt-4 max-w-xl text-3xl font-semibold leading-tight xl:text-4xl">Ruang kerja staff magang yang terhubung.</h1>
                 <p class="mt-5 max-w-md text-sm leading-7 text-white/75">Kelola laporan, jadwal pembimbingan, dan kegiatan magang melalui panel sesuai peran Anda.</p>
@@ -13,7 +13,8 @@
 
         <section class="min-w-0 p-6 sm:p-10 xl:p-12">
             <div class="mb-8 lg:hidden">
-                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-10 w-auto">
+                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-12 w-auto dark:hidden">
+                <img src="{{ asset('images/brand/MagangHub-Logo-tag-dark.svg') }}" alt="" aria-hidden="true" class="hidden h-12 w-auto dark:block">
             </div>
             <p class="text-sm font-semibold text-primary-700 dark:text-primary-300">{{ filament()->getCurrentPanel()->getId() === 'dosen' ? 'Panel dosen' : 'Panel administrator' }}</p>
             <h2 class="mt-2 text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ $this->getHeading() }}</h2>

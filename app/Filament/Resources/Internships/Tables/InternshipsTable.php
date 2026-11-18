@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -35,6 +36,7 @@ class InternshipsTable
             ->recordActions([
                 EditAction::make()
                     ->label('Ubah data')
+                    ->icon(Heroicon::OutlinedPencilSquare)
                     ->schema([
                         TextInput::make('company_name')->label('Nama instansi')->required()->maxLength(150),
                         TextInput::make('company_supervisor_name')->label('Nama pembimbing lapangan')->maxLength(100),

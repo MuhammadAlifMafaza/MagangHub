@@ -8,6 +8,7 @@ use App\Actions\ReviewReport;
 use App\Actions\SaveAssessment;
 use App\Actions\SubmitReportVersion;
 use App\Enums\ReportReviewDecision;
+use App\Enums\ReviewStatus;
 use App\Enums\UserRole;
 use App\Filament\Pages\ReportDetails as ReportDetailsPage;
 use App\Http\Requests\ReviewReportRequest;
@@ -34,10 +35,36 @@ class ReportController
         abort_if($student === null, 403);
 
         $periods = ReportPeriod::query()->whereHas('internship', fn ($query) => $query->where('student_id', $student->id))
-            ->with(['weeklyReport.latestVersion.review', 'weeklyReport.assessment' => fn ($query) => $query->published()])
+            ->with([
+                'weeklyReport.firstVersion',
+                'weeklyReport.latestVersion.review',
+                'weeklyReport.assessment' => fn ($query) => $query->published(),
+            ])
             ->orderBy('starts_on')->get();
 
         return view('reports.periods', compact('periods'));
+    }
+
+    public function studentPeriod(ReportPeriod $period, PrepareReportDetails $prepareReportDetails): View
+    {
+        $user = request()->user();
+        abort_unless($user->role === UserRole::Student, 403);
+        Gate::authorize('viewPeriod', [WeeklyReport::class, $period]);
+
+        $period->loadMissing('weeklyReport.firstVersion');
+        $report = $period->weeklyReport;
+        $fileAvailability = collect();
+
+        if ($report !== null) {
+            $details = $prepareReportDetails->handle($user, $report);
+            $report = $details['report'];
+            $fileAvailability = $details['fileAvailability'];
+            $period->setRelation('weeklyReport', $report);
+        }
+
+        $canUpload = $this->canStudentUploadPeriod($period, $report);
+
+        return view('reports.show', compact('period', 'report', 'fileAvailability', 'canUpload'));
     }
 
     public function submit(SubmitReportRequest $request, ReportPeriod $period, SubmitReportVersion $action): RedirectResponse
@@ -179,7 +206,23 @@ class ReportController
         $user = request()->user();
         abort_unless($user->role === UserRole::Student, 403);
 
-        return view('reports.show', $prepareReportDetails->handle($user, $report));
+        $details = $prepareReportDetails->handle($user, $report);
+        $report = $details['report'];
+        $period = $report->reportPeriod;
+        $period->setRelation('weeklyReport', $report);
+        $canUpload = $this->canStudentUploadPeriod($period, $report);
+
+        return view('reports.show', array_merge($details, compact('period', 'canUpload')));
+    }
+
+    private function canStudentUploadPeriod(ReportPeriod $period, ?WeeklyReport $report): bool
+    {
+        if ($report === null) {
+            return $period->starts_on->isPast();
+        }
+
+        return $report->review_status === ReviewStatus::RevisionRequested
+            || ($report->review_status === ReviewStatus::PendingReview && $report->latestVersion?->review === null);
     }
 
     private function isStoredReportFileAvailable(ReportVersion $version): bool

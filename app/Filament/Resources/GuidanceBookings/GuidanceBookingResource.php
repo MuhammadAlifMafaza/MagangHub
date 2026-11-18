@@ -61,6 +61,7 @@ class GuidanceBookingResource extends Resource
             ->recordActions([
                 Action::make('cancelBooking')
                     ->label('Batalkan pemesanan')
+                    ->icon(Heroicon::OutlinedXCircle)
                     ->color('danger')
                     ->visible(fn (GuidanceBooking $record): bool => $record->status === GuidanceBookingStatus::Booked)
                     ->schema([

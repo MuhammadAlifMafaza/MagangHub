@@ -7,6 +7,7 @@ use App\Enums\SupervisorAssignmentStatus;
 use App\Models\SupervisorAssignment;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -32,6 +33,7 @@ class SupervisorAssignmentsTable
             ->recordActions([
                 Action::make('endAssignment')
                     ->label('Akhiri Penugasan')
+                    ->icon(Heroicon::OutlinedUserMinus)
                     ->color('danger')
                     ->visible(fn (SupervisorAssignment $record): bool => $record->status === SupervisorAssignmentStatus::Active)
                     ->schema([

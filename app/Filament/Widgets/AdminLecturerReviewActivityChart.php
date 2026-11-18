@@ -63,7 +63,7 @@ class AdminLecturerReviewActivityChart extends ChartWidget
                 [
                     'label' => 'Pemeriksaan',
                     'data' => $reviews->pluck('review_count')->map(fn (mixed $count): int => (int) $count)->all(),
-                    'backgroundColor' => '#1C3155',
+                    'backgroundColor' => '#4880DC',
                     'borderRadius' => 4,
                 ],
             ],

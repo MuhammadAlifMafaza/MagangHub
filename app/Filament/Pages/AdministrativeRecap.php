@@ -163,7 +163,11 @@ class AdministrativeRecap extends Page implements HasTable
             ->columns([
                 TextColumn::make('internship.student.user.name')
                     ->label('Mahasiswa')
-                    ->searchable(['internship.student.user.name', 'internship.student.nim'])
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->where(function (Builder $matches) use ($search): void {
+                        $matches
+                            ->whereHas('internship.student.user', fn (Builder $users): Builder => $users->whereLike('name', "%{$search}%"))
+                            ->orWhereHas('internship.student', fn (Builder $students): Builder => $students->whereLike('nim', "%{$search}%"));
+                    }))
                     ->weight('medium'),
                 TextColumn::make('activeSupervisor')
                     ->label('Dosen pembimbing')

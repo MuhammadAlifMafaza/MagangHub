@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ReportPeriods\Tables;
 
 use App\Models\ReportPeriod;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -31,7 +32,8 @@ class ReportPeriodsTable
                     ->searchable(),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->icon(Heroicon::OutlinedPencilSquare),
             ])
             ->toolbarActions([]);
     }

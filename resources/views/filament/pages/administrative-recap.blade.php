@@ -6,18 +6,21 @@
                 'label' => 'Menunggu pemeriksaan',
                 'count' => $pendingReviewCount,
                 'color' => 'warning',
+                'icon' => 'heroicon-o-clock',
             ],
             [
                 'status' => \App\Enums\ReviewStatus::RevisionRequested,
                 'label' => 'Perlu revisi',
                 'count' => $revisionRequestedCount,
                 'color' => 'danger',
+                'icon' => 'heroicon-o-arrow-path',
             ],
             [
                 'status' => \App\Enums\ReviewStatus::Approved,
                 'label' => 'Disetujui',
                 'count' => $approvedReviewCount,
                 'color' => 'success',
+                'icon' => 'heroicon-o-check-circle',
             ],
         ];
 
@@ -67,7 +70,10 @@
                             'border-gray-200 dark:border-gray-700' => $reviewStatusFilter !== $shortcut['status']->value,
                         ])
                     >
-                        <span class="text-sm text-gray-600 dark:text-gray-300">{{ $shortcut['label'] }}</span>
+                        <span class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                            <x-filament::icon :icon="$shortcut['icon']" class="h-5 w-5 shrink-0 {{ $shortcutValueColors[$shortcut['color']] }}" aria-hidden="true" />
+                            {{ $shortcut['label'] }}
+                        </span>
                         <span class="flex w-full items-end justify-between gap-3">
                             <span class="text-2xl font-semibold tabular-nums {{ $shortcutValueColors[$shortcut['color']] }}">{{ number_format($shortcut['count']) }}</span>
                             <span class="text-xs font-medium text-primary-600 group-hover:underline dark:text-primary-400">Lihat laporan</span>
@@ -85,7 +91,10 @@
                         'border-gray-200 dark:border-gray-700' => $assessmentStatusFilter !== 'published',
                     ])
                 >
-                    <span class="text-sm text-gray-600 dark:text-gray-300">Nilai dipublikasikan</span>
+                    <span class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                        <x-filament::icon icon="heroicon-o-academic-cap" class="h-5 w-5 shrink-0 {{ $shortcutValueColors['primary'] }}" aria-hidden="true" />
+                        Nilai dipublikasikan
+                    </span>
                     <span class="flex w-full items-end justify-between gap-3">
                         <span class="text-2xl font-semibold tabular-nums {{ $shortcutValueColors['primary'] }}">{{ number_format($publishedAssessmentCount) }}</span>
                         <span class="text-xs font-medium text-primary-600 group-hover:underline dark:text-primary-400">Lihat laporan disetujui</span>
@@ -165,6 +174,7 @@
                 <div class="flex flex-wrap items-center gap-2" role="tablist" aria-label="Kategori laporan">
                     <x-filament::button
                         wire:click="setReportScope('attention')"
+                        icon="heroicon-o-exclamation-triangle"
                         role="tab"
                         :aria-selected="$reportScope === 'attention' ? 'true' : 'false'"
                         :color="$reportScope === 'attention' ? 'primary' : 'gray'"
@@ -175,6 +185,7 @@
                     </x-filament::button>
                     <x-filament::button
                         wire:click="setReportScope('all')"
+                        icon="heroicon-o-list-bullet"
                         role="tab"
                         :aria-selected="$reportScope === 'all' ? 'true' : 'false'"
                         :color="$reportScope === 'all' ? 'primary' : 'gray'"
@@ -185,6 +196,7 @@
                     </x-filament::button>
                     <x-filament::button
                         wire:click="setReportScope('upcoming')"
+                        icon="heroicon-o-calendar-days"
                         role="tab"
                         :aria-selected="$reportScope === 'upcoming' ? 'true' : 'false'"
                         :color="$reportScope === 'upcoming' ? 'primary' : 'gray'"
@@ -213,7 +225,7 @@
                     @endif
 
                     @if ($hasActiveFilters)
-                        <x-filament::button wire:click="resetFilters" color="gray" outlined size="sm">
+                        <x-filament::button wire:click="resetFilters" color="gray" outlined size="sm" icon="heroicon-o-arrow-path">
                             Atur ulang
                         </x-filament::button>
                     @endif

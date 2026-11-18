@@ -3,7 +3,7 @@
         <aside class="student-login-brand relative hidden min-w-0 flex-col justify-between overflow-hidden p-10 text-white lg:flex xl:p-14">
             <div aria-hidden="true" class="absolute -end-24 -top-24 size-80 rounded-full border-[40px] border-white/10"></div>
             <div class="relative">
-                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-12 w-auto rounded-lg bg-white px-3 py-2">
+                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-16 w-auto rounded-xl bg-white p-2">
                 <p class="mt-16 text-sm font-semibold uppercase tracking-[0.18em] text-white/70">Portal mahasiswa</p>
                 <h1 class="mt-4 max-w-xl text-4xl font-semibold leading-tight xl:text-5xl">Mulai perjalanan magangmu di sini.</h1>
                 <p class="mt-5 max-w-lg text-base leading-7 text-white/75">Pantau laporan mingguan, jadwal bimbingan, dan perkembangan kegiatan magang dalam satu ruang.</p>
@@ -13,7 +13,7 @@
 
         <section class="min-w-0 p-6 sm:p-10 xl:p-14">
             <div class="mb-8 lg:hidden">
-                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-10 w-auto rounded-lg bg-white px-3 py-2">
+                <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-14 w-auto rounded-xl bg-white p-1.5">
             </div>
             <p class="text-sm font-semibold text-primary-700">Selamat datang kembali</p>
             <h2 class="mt-2 text-3xl font-semibold tracking-tight text-ink">Masuk ke MagangHub</h2>

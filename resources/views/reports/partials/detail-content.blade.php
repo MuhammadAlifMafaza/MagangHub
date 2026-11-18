@@ -1,61 +1,152 @@
 @if (request()->user()->role->value === 'student')
+    @php
+        $report = $report ?? null;
+        $collectionStatus = $period->collectionStatus();
+        $reviewStatus = $report?->review_status;
+        $hasRevisionRequest = $reviewStatus?->value === 'revision_requested';
+    @endphp
+
     <div class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-ink-muted"><a class="rounded underline decoration-line-input underline-offset-4 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('mahasiswa.laporan.index') }}">Laporan mingguan</a><flux:icon.chevron-right variant="mini" class="size-4" /><span aria-current="page" class="font-medium text-ink">Minggu ke-{{ $report->reportPeriod->week_number }}</span></nav>
+        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-ink-muted"><a class="rounded underline decoration-line-input underline-offset-4 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('mahasiswa.laporan.index') }}">Laporan mingguan</a><flux:icon.chevron-right variant="mini" class="size-4" /><span aria-current="page" class="font-medium text-ink">Minggu ke-{{ $period->week_number }}</span></nav>
 
-        <header class="flex flex-col gap-4 rounded-2xl border border-primary-100 bg-linear-to-r from-primary-50/80 to-surface p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div><p class="text-sm text-ink-muted">Riwayat pengumpulan</p><h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink">Laporan minggu ke-{{ $report->reportPeriod->week_number }}</h1><p class="mt-1 text-sm text-ink-muted">{{ $report->reportPeriod->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $report->reportPeriod->ends_on->locale('id')->translatedFormat('d M Y') }}</p></div>
-            <div class="flex items-center gap-2"><span class="text-sm text-ink-muted">Status pemeriksaan</span><x-ui.status-badge :label="$report->review_status->label()" :tone="$report->review_status->color()" /></div>
-        </header>
-
-        @if ($report->review_status->value === 'revision_requested')
-            <p role="status" class="flex items-start gap-3 rounded-xl border border-warning/20 bg-warning-bg p-4 text-sm leading-6 text-warning"><flux:icon.exclamation-triangle variant="outline" class="mt-0.5 size-5 shrink-0" /><span><strong class="font-semibold">Revisi diperlukan.</strong> Baca umpan balik dosen pada versi terakhir, lalu unggah versi baru melalui daftar laporan.</span><a class="ml-auto inline-flex min-h-10 shrink-0 items-center gap-1 font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning" href="{{ route('mahasiswa.laporan.index') }}">Ke laporan <flux:icon.arrow-right variant="outline" class="size-4" /></a></p>
+        @if (session('status'))
+            <p role="status" class="flex items-start gap-3 rounded-xl border border-success/20 bg-success-bg p-4 text-sm text-success"><flux:icon.check-circle variant="outline" class="size-5 shrink-0" />{{ session('status') }}</p>
         @endif
 
-        <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <section aria-labelledby="history-heading" class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
-            <div class="border-b border-line px-4 py-4 sm:px-5"><h2 id="history-heading" class="font-semibold text-ink">Riwayat versi</h2><p class="mt-1 text-sm text-ink-muted">Dokumen dan umpan balik untuk laporan ini</p></div>
-            <ol class="divide-y divide-line px-5 sm:px-6">
-                @foreach ($report->versions as $version)
-                    <li class="relative py-5 first:pt-5">
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                            <div class="flex min-w-0 items-start gap-3">
-                                <span aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg {{ $loop->last ? 'bg-primary-50 text-primary-700' : 'bg-neutral-bg text-neutral' }}"><flux:icon.document variant="outline" class="size-5" /></span>
-                                <div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h3 class="font-semibold text-ink">Versi {{ $version->version_number }}</h3>@if ($loop->last)<span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700">Terbaru</span>@endif @if ($version->is_late)<x-ui.status-badge label="Terlambat" tone="danger" />@endif</div><p class="mt-1 break-all text-sm font-medium text-ink">{{ $version->original_name }}</p><p class="mt-1 text-xs text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB <span aria-hidden="true">·</span> @if ($version->size_bytes < 1024) {{ number_format($version->size_bytes) }} byte @else {{ number_format($version->size_bytes / 1024, $version->size_bytes < 10240 ? 1 : 0, ',', '.') }} KB @endif</p>@if ($version->student_note)<p class="mt-3 whitespace-pre-line text-sm leading-6 text-ink-muted"><span class="font-medium text-ink">Catatan Anda:</span> {{ $version->student_note }}</p>@endif</div>
-                            </div>
-                            <div class="flex shrink-0 flex-wrap gap-2">
-                                @if ($fileAvailability->get($version->getKey(), false))
-                                    @if ($version->mime_type === 'application/pdf')
-                                        <a href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
-                                    @endif
-                                    <a href="{{ route('laporan.versi.download', $version) }}" class="inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
-                                @else
-                                    <p role="status" class="max-w-sm rounded-lg border border-warning/20 bg-warning-bg px-3 py-2 text-sm leading-5 text-warning">Berkas belum tersedia di penyimpanan. Hubungi administrator untuk pemulihan.</p>
-                                @endif
-                            </div>
-                        </div>
-                        @if ($version->review)
-                            <div class="ml-12 mt-4 rounded-xl border border-info/20 bg-info-bg/50 p-4 sm:ml-12">
-                                <div class="flex flex-wrap items-center justify-between gap-2"><h4 class="flex items-center gap-2 text-sm font-semibold text-info"><flux:icon.chat-bubble-left-right variant="outline" class="size-4" />{{ $version->review->decision->label() }}</h4><time class="text-xs text-ink-muted" datetime="{{ $version->review->reviewed_at->toIso8601String() }}">{{ $version->review->reviewed_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB</time></div>
-                                @if ($version->review->feedback)<p class="mt-2 whitespace-pre-line text-sm leading-6 text-ink">{{ $version->review->feedback }}</p>@else<p class="mt-2 text-sm text-ink-muted">Tidak ada catatan tambahan.</p>@endif
-                            </div>
-                        @endif
-                    </li>
-                @endforeach
-            </ol>
-        </section>
-
-        <aside>
-        <section aria-labelledby="grade-heading" class="rounded-2xl border border-line bg-linear-to-r from-surface to-primary-50/70 p-4 shadow-sm shadow-primary-800/[0.03] sm:p-5">
-            <div class="flex items-start gap-4"><span aria-hidden="true" class="flex size-11 shrink-0 items-center justify-center rounded-xl {{ $report->assessment ? 'bg-success-bg text-success' : 'bg-neutral-bg text-neutral' }}"><flux:icon.trophy variant="outline" class="size-5" /></span><div class="min-w-0 flex-1"><h2 id="grade-heading" class="font-semibold text-ink">Hasil penilaian</h2>
-                @if ($report->assessment)
-                    <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><p class="text-3xl font-semibold tabular-nums tracking-tight text-ink">{{ number_format((float) $report->assessment->score, 2, ',', '.') }}<span class="ml-1 text-base font-medium text-ink-muted">/ 100</span></p><p class="text-sm text-ink-muted">Dipublikasikan {{ $report->assessment->published_at?->locale('id')->translatedFormat('d M Y') }}</p></div>
-                    @if ($report->assessment->notes)<p class="mt-3 whitespace-pre-line border-t border-line pt-3 text-sm leading-6 text-ink-muted">{{ $report->assessment->notes }}</p>@endif
-                @else
-                    <p class="mt-2 text-sm leading-6 text-ink-muted">Belum ada nilai yang dipublikasikan untuk laporan ini. Nilai akan terlihat di sini setelah dosen menyelesaikan penilaian.</p>
+        <header class="flex flex-col gap-4 rounded-2xl border border-primary-100 bg-linear-to-r from-primary-50/80 to-surface p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div>
+                <p class="text-sm text-ink-muted">Detail periode laporan</p>
+                <h1 class="mt-1 text-2xl font-semibold tracking-tight text-ink">Laporan minggu ke-{{ $period->week_number }}</h1>
+                <p class="mt-1 text-sm text-ink-muted">{{ $period->starts_on->locale('id')->translatedFormat('d M Y') }}–{{ $period->ends_on->locale('id')->translatedFormat('d M Y') }}</p>
+            </div>
+            <div class="flex flex-col gap-2 sm:items-end">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-sm text-ink-muted">Status pengumpulan</span>
+                    <x-ui.status-badge :label="$collectionStatus->label()" :tone="$collectionStatus->color()" />
+                </div>
+                @if ($reviewStatus)
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-sm text-ink-muted">Status pemeriksaan</span>
+                        <x-ui.status-badge :label="$reviewStatus->label()" :tone="$reviewStatus->color()" />
+                    </div>
                 @endif
-            </div></div>
-        </section>
-        </aside>
+            </div>
+        </header>
+
+        @if ($hasRevisionRequest)
+            <p role="status" class="flex flex-col gap-3 rounded-xl border border-warning/20 bg-warning-bg p-4 text-sm leading-6 text-warning sm:flex-row sm:items-center"><span class="flex items-start gap-3"><flux:icon.exclamation-triangle variant="outline" class="mt-0.5 size-5 shrink-0" /><span><strong class="font-semibold">Revisi diperlukan.</strong> Baca umpan balik dosen pada versi terakhir sebelum mengirim revisi.</span></span><a class="inline-flex min-h-10 shrink-0 items-center gap-1 font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning sm:ml-auto" href="#submission-form">Ke formulir revisi <flux:icon.arrow-down variant="outline" class="size-4" /></a></p>
+        @endif
+
+        <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <section aria-labelledby="history-heading" class="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm shadow-primary-800/[0.03]">
+                <div class="border-b border-line px-4 py-4 sm:px-5">
+                    <h2 id="history-heading" class="font-semibold text-ink">Riwayat versi</h2>
+                    <p class="mt-1 text-sm text-ink-muted">Dokumen dan umpan balik untuk periode ini</p>
+                </div>
+
+                @if ($report && $report->versions->isNotEmpty())
+                    <ol class="divide-y divide-line px-5 sm:px-6">
+                        @foreach ($report->versions as $version)
+                            <li class="relative py-5 first:pt-5">
+                                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                                    <div class="flex min-w-0 items-start gap-3">
+                                        <span aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg {{ $loop->last ? 'bg-primary-50 text-primary-700' : 'bg-neutral-bg text-neutral' }}"><flux:icon.document variant="outline" class="size-5" /></span>
+                                        <div class="min-w-0">
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <h3 class="font-semibold text-ink">Versi {{ $version->version_number }}</h3>
+                                                @if ($loop->last)<span class="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700">Terbaru</span>@endif
+                                                @if ($version->is_late)<x-ui.status-badge label="Terlambat" tone="danger" />@endif
+                                            </div>
+                                            <p class="mt-1 break-all text-sm font-medium text-ink">{{ $version->original_name }}</p>
+                                            <p class="mt-1 text-xs text-ink-muted">{{ $version->submitted_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB <span aria-hidden="true">·</span> @if ($version->size_bytes < 1024) {{ number_format($version->size_bytes) }} byte @else {{ number_format($version->size_bytes / 1024, $version->size_bytes < 10240 ? 1 : 0, ',', '.') }} KB @endif</p>
+                                            @if ($version->student_note)<p class="mt-3 whitespace-pre-line text-sm leading-6 text-ink-muted"><span class="font-medium text-ink">Catatan Anda:</span> {{ $version->student_note }}</p>@endif
+                                        </div>
+                                    </div>
+                                    <div class="flex shrink-0 flex-wrap gap-2">
+                                        @if ($fileAvailability->get($version->getKey(), false))
+                                            @if ($version->mime_type === 'application/pdf')
+                                                <a href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
+                                            @endif
+                                            <a href="{{ route('laporan.versi.download', $version) }}" class="inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
+                                        @else
+                                            <p role="status" class="max-w-sm rounded-lg border border-warning/20 bg-warning-bg px-3 py-2 text-sm leading-5 text-warning">Berkas belum tersedia di penyimpanan. Hubungi administrator untuk pemulihan.</p>
+                                        @endif
+                                    </div>
+                                </div>
+                                @if ($version->review)
+                                    <div class="ml-12 mt-4 rounded-xl border border-info/20 bg-info-bg/50 p-4 sm:ml-12">
+                                        <div class="flex flex-wrap items-center justify-between gap-2"><h4 class="flex items-center gap-2 text-sm font-semibold text-info"><flux:icon.chat-bubble-left-right variant="outline" class="size-4" />{{ $version->review->decision->label() }}</h4><time class="text-xs text-ink-muted" datetime="{{ $version->review->reviewed_at->toIso8601String() }}">{{ $version->review->reviewed_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB</time></div>
+                                        @if ($version->review->feedback)<p class="mt-2 whitespace-pre-line text-sm leading-6 text-ink">{{ $version->review->feedback }}</p>@else<p class="mt-2 text-sm text-ink-muted">Tidak ada catatan tambahan.</p>@endif
+                                    </div>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ol>
+                @else
+                    <div class="flex flex-col items-center px-6 py-10 text-center">
+                        <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-xl bg-primary-50 text-primary-700"><flux:icon.document variant="outline" class="size-5" /></span>
+                        <h3 class="mt-3 font-semibold text-ink">Belum ada berkas laporan</h3>
+                        <p class="mt-1 max-w-md text-sm leading-6 text-ink-muted">
+                            @if ($report)
+                                Riwayat versi akan tampil di sini setelah berkas laporan tersedia.
+                            @else
+                                Setelah laporan dikirim, versi berkas dan umpan balik dosen akan tampil di sini.
+                            @endif
+                        </p>
+                    </div>
+                @endif
+            </section>
+
+            <aside class="order-first flex flex-col gap-4 lg:order-last">
+                <section id="submission-form" aria-labelledby="submission-heading" class="rounded-2xl border border-line bg-surface p-4 shadow-sm shadow-primary-800/[0.03] sm:p-5">
+                    <div class="flex items-start gap-3">
+                        <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-xl {{ $canUpload ? 'bg-primary-50 text-primary-700' : 'bg-neutral-bg text-neutral' }}"><flux:icon.cloud-arrow-up variant="outline" class="size-5" /></span>
+                        <div class="min-w-0">
+                            <h2 id="submission-heading" class="font-semibold text-ink">Pekerjaan Anda</h2>
+                            @if ($canUpload)
+                                @if ($hasRevisionRequest)
+                                    <p class="mt-1 text-sm leading-6 text-ink-muted">Baca umpan balik di riwayat versi, lalu unggah revisi laporan.</p>
+                                @elseif ($collectionStatus->value === 'not_submitted_late')
+                                    <p class="mt-1 text-sm leading-6 text-danger">Tenggat terlewati. Laporan masih dapat dikirim dan akan ditandai terlambat.</p>
+                                @elseif ($report)
+                                    <p class="mt-1 text-sm leading-6 text-ink-muted">Laporan belum diperiksa. Anda masih dapat memperbarui berkasnya.</p>
+                                @else
+                                    <p class="mt-1 text-sm leading-6 text-ink-muted">Kirim laporan untuk periode ini sebelum tenggat.</p>
+                                @endif
+                            @elseif ($collectionStatus->value === 'not_opened')
+                                <p class="mt-1 text-sm leading-6 text-ink-muted">Periode dibuka {{ $period->starts_on->locale('id')->translatedFormat('d M Y') }}. Formulir tersedia setelah periode dimulai.</p>
+                            @elseif ($reviewStatus?->value === 'pending_review')
+                                <p class="mt-1 text-sm leading-6 text-ink-muted">Laporan sudah dikirim dan sedang menunggu pemeriksaan dosen.</p>
+                            @elseif ($reviewStatus?->value === 'approved')
+                                <p class="mt-1 text-sm leading-6 text-success">Laporan telah disetujui dosen.</p>
+                            @else
+                                <p class="mt-1 text-sm leading-6 text-ink-muted">Belum ada tindakan yang perlu dilakukan untuk periode ini.</p>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if ($canUpload)
+                        @include('reports.partials.period-upload-form', ['period' => $period, 'report' => $report])
+                    @endif
+                </section>
+
+                <section aria-labelledby="grade-heading" class="rounded-2xl border border-line bg-linear-to-r from-surface to-primary-50/70 p-4 shadow-sm shadow-primary-800/[0.03] sm:p-5">
+                    <div class="flex items-start gap-4">
+                        <span aria-hidden="true" class="flex size-11 shrink-0 items-center justify-center rounded-xl {{ $report?->assessment ? 'bg-success-bg text-success' : 'bg-neutral-bg text-neutral' }}"><flux:icon.trophy variant="outline" class="size-5" /></span>
+                        <div class="min-w-0 flex-1">
+                            <h2 id="grade-heading" class="font-semibold text-ink">Hasil penilaian</h2>
+                            @if ($report?->assessment)
+                                <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><p class="text-3xl font-semibold tabular-nums tracking-tight text-ink">{{ number_format((float) $report->assessment->score, 2, ',', '.') }}<span class="ml-1 text-base font-medium text-ink-muted">/ 100</span></p><p class="text-sm text-ink-muted">Dipublikasikan {{ $report->assessment->published_at?->locale('id')->translatedFormat('d M Y') }}</p></div>
+                                @if ($report->assessment->notes)<p class="mt-3 whitespace-pre-line border-t border-line pt-3 text-sm leading-6 text-ink-muted">{{ $report->assessment->notes }}</p>@endif
+                            @elseif ($report)
+                                <p class="mt-2 text-sm leading-6 text-ink-muted">Belum ada nilai yang dipublikasikan. Nilai akan tampil setelah dosen menyelesaikan penilaian.</p>
+                            @else
+                                <p class="mt-2 text-sm leading-6 text-ink-muted">Nilai akan tampil di sini setelah laporan diperiksa dan dosen memublikasikan penilaian.</p>
+                            @endif
+                        </div>
+                    </div>
+                </section>
+            </aside>
         </div>
     </div>
 @elseif (request()->user()->role->value === 'lecturer')

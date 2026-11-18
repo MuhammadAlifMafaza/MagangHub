@@ -21,6 +21,8 @@ class PrepareReportDetails
 
         $report->load([
             'reportPeriod.internship.student.user',
+            'firstVersion',
+            'latestVersion.review',
             'versions.review',
             'reviews.lecturer.user',
             'assessment' => fn ($query) => $user->role === UserRole::Student ? $query->published() : $query,

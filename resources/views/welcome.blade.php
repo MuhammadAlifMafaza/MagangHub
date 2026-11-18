@@ -18,7 +18,8 @@
         <header class="sticky top-0 z-40 border-b border-line bg-surface/95 shadow-sm backdrop-blur">
             <nav aria-label="Navigasi utama" class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                 <a href="{{ route('home') }}" aria-label="MagangHub, halaman utama" class="inline-flex items-center rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-700">
-                    <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-10 w-auto">
+                    <img src="{{ asset('images/brand/MagangHub-Logo-tag.svg') }}" alt="MagangHub" class="h-12 w-auto dark:hidden">
+                    <img src="{{ asset('images/brand/MagangHub-Logo-tag-dark.svg') }}" alt="" aria-hidden="true" class="hidden h-12 w-auto dark:block">
                 </a>
 
                 <div class="hidden items-center gap-6 md:flex">
@@ -184,7 +185,10 @@
             <section id="institusi" class="scroll-mt-24 bg-bg py-16 sm:py-20">
                 <div class="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:px-8">
                     <div class="flex items-center gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-7">
-                        <img src="{{ asset('images/brand/Logo.svg') }}" alt="" class="size-14 rounded-xl bg-primary-50 p-2">
+                        <span class="flex size-14 items-center justify-center rounded-xl bg-primary-50 p-2">
+                            <img src="{{ asset('images/brand/Logo.svg') }}" alt="" class="size-full object-contain dark:hidden">
+                            <img src="{{ asset('images/brand/Logo-dark.svg') }}" alt="" aria-hidden="true" class="hidden size-full object-contain dark:block">
+                        </span>
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-wide text-secondary-700">Portal kegiatan magang</p>
                             <p class="mt-1 text-lg font-semibold text-ink">MagangHub</p>

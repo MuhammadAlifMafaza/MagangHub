@@ -48,7 +48,10 @@
                     <h3 id="admin-report-status-heading" class="font-semibold text-gray-950 dark:text-white">Status pemeriksaan laporan</h3>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Jumlah laporan per status pada periode aktif.</p>
                 </div>
-                <a href="{{ $recapUrl }}" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">Buka rekap administratif</a>
+                <a href="{{ $recapUrl }}" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-400">
+                    <x-filament::icon icon="heroicon-o-clipboard-document-list" class="me-1 inline-block h-4 w-4 align-text-bottom" aria-hidden="true" />
+                    Buka rekap administratif
+                </a>
             </div>
 
             <div class="mt-4 grid gap-3 md:grid-cols-3">

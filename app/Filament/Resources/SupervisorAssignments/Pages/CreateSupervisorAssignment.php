@@ -6,12 +6,29 @@ use App\Actions\AssignSupervisor;
 use App\Filament\Resources\SupervisorAssignments\SupervisorAssignmentResource;
 use App\Models\Lecturer;
 use App\Models\Student;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateSupervisorAssignment extends CreateRecord
 {
     protected static string $resource = SupervisorAssignmentResource::class;
+
+    protected function getCreateFormAction(): Action
+    {
+        return parent::getCreateFormAction()->icon(Heroicon::OutlinedPlus);
+    }
+
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return parent::getCreateAnotherFormAction()->icon(Heroicon::OutlinedPlus);
+    }
+
+    protected function getCancelFormAction(): Action
+    {
+        return parent::getCancelFormAction()->icon(Heroicon::OutlinedXMark);
+    }
 
     protected function handleRecordCreation(array $data): Model
     {
