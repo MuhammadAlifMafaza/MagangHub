@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
@@ -18,15 +19,16 @@ class UserForm
      */
     public static function editActionSchema(User $record): array
     {
-        $schema = [
+        $accountFields = [
             TextInput::make('name')->label('Nama lengkap')->required()->maxLength(255),
             TextInput::make('email')->label('Alamat email')->email()->required()->maxLength(255)
                 ->rules([Rule::unique('users', 'email')->ignore($record->id)]),
         ];
 
+        $profileFields = [];
+
         if ($record->role === UserRole::Student) {
-            $schema = [
-                ...$schema,
+            $profileFields = [
                 TextInput::make('nim')->label('NIM')->required()->maxLength(20)
                     ->rules([Rule::unique('students', 'nim')->ignore($record->student?->id)]),
                 TextInput::make('study_program')->label('Program studi')->required()->maxLength(100),
@@ -34,8 +36,7 @@ class UserForm
                 TextInput::make('phone')->label('Nomor telepon')->tel()->maxLength(30),
             ];
         } elseif ($record->role === UserRole::Lecturer) {
-            $schema = [
-                ...$schema,
+            $profileFields = [
                 TextInput::make('nidn')->label('NIDN')->required()->maxLength(20)
                     ->rules([Rule::unique('lecturers', 'nidn')->ignore($record->lecturer?->id)]),
                 TextInput::make('department')->label('Departemen')->maxLength(100),
@@ -43,7 +44,17 @@ class UserForm
             ];
         }
 
-        return $schema;
+        return [
+            Section::make('Informasi akun')
+                ->description('Nama dan alamat email untuk masuk ke MagangHub.')
+                ->columns(2)
+                ->schema($accountFields),
+            ...($profileFields === [] ? [] : [
+                Section::make($record->role === UserRole::Student ? 'Informasi mahasiswa' : 'Informasi dosen')
+                    ->columns(2)
+                    ->schema($profileFields),
+            ]),
+        ];
     }
 
     /**
@@ -62,25 +73,42 @@ class UserForm
     {
         return $schema
             ->components([
-                TextInput::make('name')->label('Nama lengkap')->required()->maxLength(255),
-                TextInput::make('email')->label('Alamat email')->email()->required()->unique('users', 'email')->maxLength(255),
-                TextInput::make('password')->label('Kata sandi sementara')->password()->required()->rule(Password::default()),
-                Select::make('role')
-                    ->label('Peran')
-                    ->options([
-                        UserRole::Admin->value => 'Admin',
-                        UserRole::Lecturer->value => 'Dosen',
-                        UserRole::Student->value => 'Mahasiswa',
+                Section::make('Informasi akun')
+                    ->description('Isi identitas masuk dan tentukan peran pengguna.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')->label('Nama lengkap')->required()->maxLength(255),
+                        TextInput::make('email')->label('Alamat email')->email()->required()->unique('users', 'email')->maxLength(255),
+                        TextInput::make('password')->label('Kata sandi sementara')->password()->required()->rule(Password::default()),
+                        Select::make('role')
+                            ->label('Peran')
+                            ->options([
+                                UserRole::Admin->value => 'Admin',
+                                UserRole::Lecturer->value => 'Dosen',
+                                UserRole::Student->value => 'Mahasiswa',
+                            ])
+                            ->live()
+                            ->required(),
+                    ]),
+                Section::make('Informasi mahasiswa')
+                    ->description('Lengkapi data akademik mahasiswa.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('nim')->label('NIM')->required()->maxLength(20)->unique('students', 'nim'),
+                        TextInput::make('study_program')->label('Program studi')->required()->maxLength(100),
+                        TextInput::make('cohort_year')->label('Angkatan')->numeric()->minValue(1900)->maxValue(2100),
+                        TextInput::make('phone')->label('Nomor telepon')->tel()->maxLength(30),
                     ])
-                    ->live()
-                    ->required(),
-                TextInput::make('nim')->label('NIM')->required()->maxLength(20)->unique('students', 'nim')->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
-                TextInput::make('study_program')->label('Program studi')->required()->maxLength(100)->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
-                TextInput::make('cohort_year')->label('Angkatan')->numeric()->minValue(1900)->maxValue(2100)->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
-                TextInput::make('nidn')->label('NIDN')->required()->maxLength(20)->unique('lecturers', 'nidn')->visible(fn (Get $get): bool => $get('role') === UserRole::Lecturer->value),
-                TextInput::make('department')->label('Departemen')->maxLength(100)->visible(fn (Get $get): bool => $get('role') === UserRole::Lecturer->value),
-                TextInput::make('phone')->label('Nomor telepon')->tel()->maxLength(30)
-                    ->visible(fn (Get $get): bool => in_array($get('role'), [UserRole::Student->value, UserRole::Lecturer->value], true)),
+                    ->visible(fn (Get $get): bool => $get('role') === UserRole::Student->value),
+                Section::make('Informasi dosen')
+                    ->description('Lengkapi identitas dosen pembimbing.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('nidn')->label('NIDN')->required()->maxLength(20)->unique('lecturers', 'nidn'),
+                        TextInput::make('department')->label('Departemen')->maxLength(100),
+                        TextInput::make('phone')->label('Nomor telepon')->tel()->maxLength(30),
+                    ])
+                    ->visible(fn (Get $get): bool => $get('role') === UserRole::Lecturer->value),
             ]);
     }
 }

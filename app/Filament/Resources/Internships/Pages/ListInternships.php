@@ -15,6 +15,7 @@ class ListInternships extends ListRecords
     {
         return [
             CreateAction::make()
+                ->label('Tambah data magang')
                 ->icon(Heroicon::OutlinedPlus),
         ];
     }

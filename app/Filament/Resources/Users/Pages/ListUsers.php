@@ -15,6 +15,7 @@ class ListUsers extends ListRecords
     {
         return [
             CreateAction::make()
+                ->label('Tambah akun pengguna')
                 ->icon(Heroicon::OutlinedPlus),
         ];
     }

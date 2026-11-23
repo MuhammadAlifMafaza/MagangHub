@@ -25,8 +25,8 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')->label('Nama')->searchable()->sortable(),
                 TextColumn::make('email')->label('Email')->searchable()->sortable(),
-                TextColumn::make('student.nim')->label('NIM')->searchable()->placeholder('None'),
-                TextColumn::make('lecturer.nidn')->label('NIDN')->searchable()->placeholder('None'),
+                TextColumn::make('student.nim')->label('NIM')->searchable()->placeholder('—'),
+                TextColumn::make('lecturer.nidn')->label('NIDN')->searchable()->placeholder('—'),
                 TextColumn::make('role')->label('Peran')->formatStateUsing(fn (UserRole $state): string => match ($state) {
                     UserRole::Admin => 'Admin',
                     UserRole::Lecturer => 'Dosen',
@@ -79,6 +79,9 @@ class UsersTable
                     ->action(fn (User $record, array $data) => app(ResetAccountPassword::class)
                         ->handle(auth()->user(), $record, $data['password'])),
             ])
+            ->emptyStateIcon(Heroicon::OutlinedUsers)
+            ->emptyStateHeading('Belum ada akun pengguna')
+            ->emptyStateDescription('Tambahkan akun mahasiswa atau dosen untuk mulai mengelola akses MagangHub.')
             ->toolbarActions([]);
     }
 }

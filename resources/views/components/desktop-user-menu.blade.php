@@ -19,8 +19,11 @@
         </div>
         <flux:menu.separator />
         <flux:menu.radio.group>
-            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                Pengaturan akun
+            <flux:menu.item :href="route('profile.edit')" icon="user-circle" wire:navigate>
+                Profil
+            </flux:menu.item>
+            <flux:menu.item :href="route('security.edit')" icon="cog-6-tooth" wire:navigate>
+                Pengaturan
             </flux:menu.item>
             <form method="POST" action="{{ route('logout') }}" class="w-full">
                 @csrf

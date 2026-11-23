@@ -37,6 +37,7 @@ class ReportDetails extends Page
         $parentBreadcrumb = match (auth()->user()->role) {
             UserRole::Admin => [AdministrativeRecap::getUrl(panel: 'admin') => 'Rekap administratif'],
             UserRole::Lecturer => [ReportReviewResource::getUrl('index', panel: 'dosen') => 'Pemeriksaan laporan'],
+            UserRole::Student => abort(403),
         };
 
         return [...$parentBreadcrumb, 'Detail laporan'];

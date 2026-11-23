@@ -13,7 +13,7 @@ class CancelGuidanceBooking
 {
     public function handle(GuidanceBooking $booking, Student $student, ?string $reason = null): GuidanceBooking
     {
-        return DB::transaction(function () use ($booking, $student, $reason): GuidanceBooking {
+        $cancelledBooking = DB::transaction(function () use ($booking, $student, $reason): GuidanceBooking {
             $lockedStudent = Student::query()->lockForUpdate()->findOrFail($student->id);
             $slot = GuidanceSlot::query()->whereKey($booking->guidance_slot_id)->lockForUpdate()->firstOrFail();
             $lockedBooking = GuidanceBooking::query()->whereKey($booking->id)->lockForUpdate()->firstOrFail();
@@ -32,5 +32,17 @@ class CancelGuidanceBooking
 
             return $lockedBooking->refresh();
         });
+
+        $cancelledBooking->load('student.user', 'slot.lecturer.user');
+        app(SendWorkflowNotification::class)->handle(
+            $cancelledBooking->slot->lecturer->user,
+            'guidance_cancelled_by_student',
+            'Jadwal bimbingan dibatalkan',
+            $cancelledBooking->student->user->name.' membatalkan jadwal bimbingan pada '.$cancelledBooking->slot->starts_at->format('d M Y H:i').'.',
+            '/dosen',
+            'Buka panel dosen',
+        );
+
+        return $cancelledBooking;
     }
 }

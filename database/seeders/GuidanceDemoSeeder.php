@@ -68,6 +68,12 @@ class GuidanceDemoSeeder extends Seeder
             ]);
         }
 
+        $assignment = $student->supervisorAssignments()
+            ->where('lecturer_id', $lecturer->id)
+            ->where('status', SupervisorAssignmentStatus::Active)
+            ->first();
+        $assignment?->update(['assigned_at' => $internship->start_date->copy()->startOfDay()]);
+
         $periods = $internship->reportPeriods()->orderBy('week_number')->get();
         $historicalPeriod = $periods->first();
         $currentPeriod = $periods->first(fn (ReportPeriod $period): bool => $period->starts_on->lte(now()) && $period->ends_on->toDateString() >= now()->toDateString()) ?? $periods->last();
@@ -221,11 +227,7 @@ class GuidanceDemoSeeder extends Seeder
             ->get();
 
         foreach ($versions as $version) {
-            $period = $version->weeklyReport?->reportPeriod;
-
-            if ($period instanceof ReportPeriod) {
-                $this->repairLegacyDemoVersion($version, $student, $period);
-            }
+            $this->repairLegacyDemoVersion($version, $student, $version->weeklyReport->reportPeriod);
         }
     }
 

@@ -178,12 +178,25 @@ class ReportController
         }, $range === null ? 200 : 206, $headers);
     }
 
+    public function pdfViewer(ReportVersion $version): View
+    {
+        Gate::authorize('download', $version);
+        abort_unless($version->mime_type === 'application/pdf', 415);
+        abort_unless($this->isStoredReportFileAvailable($version), 404);
+
+        return view('reports.pdf-viewer', [
+            'version' => $version->loadMissing('weeklyReport.reportPeriod.internship.student'),
+        ]);
+    }
+
     public function lecturerQueue(): View
     {
         $lecturer = request()->user()->lecturer;
         abort_if($lecturer === null, 403);
         $reports = WeeklyReport::query()->pendingReview()
-            ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn ($query) => $query->where('lecturer_id', $lecturer->id)->where('status', 'active'))
+            ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn ($query) => $query
+                ->where('lecturer_id', $lecturer->id)
+                ->coveringPeriodStart())
             ->with(['reportPeriod.internship.student.user', 'latestVersion'])
             ->oldest('created_at')->paginate(20);
 

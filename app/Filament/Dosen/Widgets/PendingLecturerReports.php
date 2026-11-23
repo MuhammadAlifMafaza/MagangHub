@@ -23,7 +23,7 @@ class PendingLecturerReports extends Widget
                 ->with(['reportPeriod.internship.student.user', 'latestVersion'])
                 ->where('review_status', ReviewStatus::PendingReview)
                 ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn (Builder $query) => $query
-                    ->where('lecturer_id', $lecturerId)->where('status', 'active'))
+                    ->where('lecturer_id', $lecturerId)->coveringPeriodStart())
                 ->latest('updated_at')
                 ->limit(10)
                 ->get(),

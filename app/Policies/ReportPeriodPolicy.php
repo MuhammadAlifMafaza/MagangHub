@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Enums\UserRole;
 use App\Models\ReportPeriod;
+use App\Models\SupervisorAssignment;
 use App\Models\User;
 
 class ReportPeriodPolicy
@@ -13,7 +14,7 @@ class ReportPeriodPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->role === UserRole::Admin;
+        return $user->is_active && $user->role === UserRole::Admin;
     }
 
     /**
@@ -22,12 +23,13 @@ class ReportPeriodPolicy
     public function view(User $user, ReportPeriod $reportPeriod): bool
     {
         return match ($user->role) {
-            UserRole::Admin => true,
-            UserRole::Lecturer => $reportPeriod->internship->student->supervisorAssignments()
+            UserRole::Admin => $user->is_active,
+            UserRole::Lecturer => $user->is_active && SupervisorAssignment::query()
+                ->where('student_id', $reportPeriod->internship->student_id)
                 ->where('lecturer_id', $user->lecturer?->id)
-                ->whereIn('status', ['active', config('magang.supervisor_assignments.lecturer_historical_read_status', 'ended')])
+                ->coveringInstant($reportPeriod->starts_on->copy()->startOfDay())
                 ->exists(),
-            UserRole::Student => $reportPeriod->internship->student->user_id === $user->id,
+            UserRole::Student => $user->is_active && $reportPeriod->internship->student->user_id === $user->id,
         };
     }
 
@@ -44,7 +46,7 @@ class ReportPeriodPolicy
      */
     public function update(User $user, ReportPeriod $reportPeriod): bool
     {
-        return $user->role === UserRole::Admin;
+        return $user->is_active && $user->role === UserRole::Admin;
     }
 
     /**

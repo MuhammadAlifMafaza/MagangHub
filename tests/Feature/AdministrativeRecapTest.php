@@ -532,7 +532,11 @@ test('lecturer widgets list pending assigned reports and count drafts only for t
     $otherLecturer = Lecturer::factory()->create(['user_id' => $otherLecturerUser->id]);
     $student = Student::factory()->create(['user_id' => User::factory()->create(['name' => 'Assigned Report Student'])->id]);
     $otherStudent = Student::factory()->create(['user_id' => User::factory()->create(['name' => 'Unassigned Report Student'])->id]);
-    SupervisorAssignment::factory()->create(['student_id' => $student->id, 'lecturer_id' => $lecturer->id]);
+    SupervisorAssignment::factory()->create([
+        'student_id' => $student->id,
+        'lecturer_id' => $lecturer->id,
+        'assigned_at' => now()->subDays(30),
+    ]);
     SupervisorAssignment::factory()->create(['student_id' => $otherStudent->id, 'lecturer_id' => $otherLecturer->id]);
     $pendingReport = makeRecapReport($student, 2);
     $otherReport = makeRecapReport($otherStudent, 3);

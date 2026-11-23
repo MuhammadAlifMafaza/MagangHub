@@ -13,6 +13,7 @@ class ReviewReportRequest extends FormRequest
         return $this->user()?->role === UserRole::Lecturer && $this->user()->can('review', $this->route('report'));
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         return [

@@ -66,7 +66,7 @@
                                 @if ($fileAvailability->get($version->getKey(), false))
                                     @if ($version->mime_type === 'application/pdf')
                                         <x-filament::button
-                                            :href="route('laporan.versi.preview', $version)"
+                                            :href="route('laporan.versi.viewer', $version)"
                                             tag="a"
                                             target="_blank"
                                             rel="noopener"

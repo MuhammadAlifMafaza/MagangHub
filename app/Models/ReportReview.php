@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ReportReviewDecision;
+use Database\Factories\ReportReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['weekly_report_id', 'report_version_id', 'lecturer_id', 'decision', 'feedback', 'reviewed_at'])]
 class ReportReview extends Model
 {
+    /** @use HasFactory<ReportReviewFactory> */
     use HasFactory;
 
     protected function casts(): array
@@ -18,16 +20,19 @@ class ReportReview extends Model
         return ['decision' => ReportReviewDecision::class, 'reviewed_at' => 'datetime'];
     }
 
+    /** @return BelongsTo<WeeklyReport, $this> */
     public function weeklyReport(): BelongsTo
     {
         return $this->belongsTo(WeeklyReport::class);
     }
 
+    /** @return BelongsTo<ReportVersion, $this> */
     public function reportVersion(): BelongsTo
     {
         return $this->belongsTo(ReportVersion::class);
     }
 
+    /** @return BelongsTo<Lecturer, $this> */
     public function lecturer(): BelongsTo
     {
         return $this->belongsTo(Lecturer::class);

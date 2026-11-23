@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
+/** @extends resource<WeeklyReport> */
 class ReportReviewResource extends Resource
 {
     protected static ?string $model = WeeklyReport::class;
@@ -41,6 +42,8 @@ class ReportReviewResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'Laporan';
 
     protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+
+    protected static ?int $navigationSort = 10;
 
     public static function canViewAny(): bool
     {
@@ -56,7 +59,7 @@ class ReportReviewResource extends Resource
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->where(function (Builder $reports): void {
-                $reports->pendingReview()->orWhere(function (Builder $approved): void {
+                $reports->where('review_status', ReviewStatus::PendingReview)->orWhere(function (Builder $approved): void {
                     $approved->where('review_status', ReviewStatus::Approved)
                         ->whereHas('assessment', fn (Builder $assessment): Builder => $assessment->where('status', AssessmentStatus::Draft));
                 });
@@ -71,7 +74,7 @@ class ReportReviewResource extends Resource
                     ->tooltip(fn (?string $state): ?string => $state)
                     ->placeholder('Belum ada berkas')
                     ->url(fn (WeeklyReport $record): ?string => self::hasStoredLatestVersion($record)
-                        ? route($record->latestVersion->mime_type === 'application/pdf' ? 'laporan.versi.preview' : 'laporan.versi.download', $record->latestVersion)
+                        ? route($record->latestVersion->mime_type === 'application/pdf' ? 'laporan.versi.viewer' : 'laporan.versi.download', $record->latestVersion)
                         : null)
                     ->openUrlInNewTab()
                     ->color('primary'),
@@ -132,8 +135,7 @@ class ReportReviewResource extends Resource
                             $record->latestVersion?->mime_type === 'application/pdf' => 'Buka PDF di tab baru',
                             default => 'Pratinjau hanya tersedia untuk PDF.',
                         })
-                            ->url(fn ($state, WeeklyReport $record): ?string => self::hasStoredLatestVersion($record) && $record->latestVersion?->mime_type === 'application/pdf' ? route('laporan.versi.preview', $record->latestVersion) : null)
-                            ->openUrlInNewTab(),
+                            ->url(fn ($state, WeeklyReport $record): ?string => self::hasStoredLatestVersion($record) && $record->latestVersion?->mime_type === 'application/pdf' ? route('laporan.versi.viewer', $record->latestVersion) : null),
                         TextEntry::make('latestVersion.id')->label('Unduh berkas')->formatStateUsing(fn ($state, WeeklyReport $record): string => self::hasStoredLatestVersion($record) ? 'Unduh versi terbaru' : 'Berkas tidak tersedia')
                             ->url(fn ($state, WeeklyReport $record): ?string => self::hasStoredLatestVersion($record) ? route('laporan.versi.download', $record->latestVersion) : null),
                     ])->modalHeading('Detail pemeriksaan laporan')->modalWidth('3xl')->modalSubmitAction(false)->modalCancelActionLabel('Tutup'),
@@ -186,6 +188,9 @@ class ReportReviewResource extends Resource
                         $publishAssessmentAction->handle($assessment);
                     }),
             ])
+            ->emptyStateIcon(Heroicon::OutlinedDocumentText)
+            ->emptyStateHeading('Tidak ada laporan untuk diperiksa')
+            ->emptyStateDescription('Laporan yang dikirim mahasiswa akan muncul di sini untuk ditinjau.')
             ->toolbarActions([]);
     }
 
@@ -196,7 +201,7 @@ class ReportReviewResource extends Resource
 
         return parent::getEloquentQuery()
             ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn (Builder $query): Builder => $query
-                ->where('lecturer_id', $lecturer->id)->where('status', 'active'))
+                ->where('lecturer_id', $lecturer->id)->coveringPeriodStart())
             ->with(['reportPeriod.internship.student.user', 'latestVersion', 'assessment']);
     }
 

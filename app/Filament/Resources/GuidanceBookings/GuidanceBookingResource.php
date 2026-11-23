@@ -32,11 +32,11 @@ class GuidanceBookingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
+    protected static ?int $navigationSort = 10;
+
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-            ]);
+        return $schema->components([]);
     }
 
     public static function table(Table $table): Table
@@ -72,7 +72,10 @@ class GuidanceBookingResource extends Resource
                         Gate::authorize('cancelByAdmin', $record);
                         app(CancelGuidanceBookingByStaff::class)->handle($record, auth()->user(), $data['reason']);
                     }),
-            ]);
+            ])
+            ->emptyStateIcon(Heroicon::OutlinedCalendarDays)
+            ->emptyStateHeading('Belum ada pemesanan bimbingan')
+            ->emptyStateDescription('Pemesanan mahasiswa akan muncul di sini setelah slot bimbingan dipesan.');
     }
 
     public static function getEloquentQuery(): Builder

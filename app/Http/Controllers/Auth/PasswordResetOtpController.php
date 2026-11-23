@@ -59,7 +59,9 @@ class PasswordResetOtpController extends Controller
         RateLimiter::hit($ipKey, 3600);
 
         $user = User::query()->whereRaw('LOWER(email) = ?', [$email])->first();
-        $email = $user?->email ?? $email;
+        if ($user !== null) {
+            $email = $user->email;
+        }
         $request->session()->put('password_otp_email', $email);
 
         Password::broker(config('fortify.passwords'))->sendResetLink(

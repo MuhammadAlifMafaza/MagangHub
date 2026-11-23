@@ -13,6 +13,8 @@ class SubmitReportRequest extends FormRequest
         return $this->user()?->can('submit', [WeeklyReport::class, $this->route('period')]) ?? false;
     }
 
+    /** @return array<string, array<int, mixed>> */
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         $maxKilobytes = (int) ceil(config('magang.reports.max_size_bytes', 10 * 1024 * 1024) / 1024);

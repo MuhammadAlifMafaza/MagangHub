@@ -14,7 +14,7 @@ class CancelGuidanceBookingByStaff
 {
     public function handle(GuidanceBooking $booking, User $actor, string $reason): GuidanceBooking
     {
-        return DB::transaction(function () use ($booking, $actor, $reason): GuidanceBooking {
+        $cancelledBooking = DB::transaction(function () use ($booking, $actor, $reason): GuidanceBooking {
             $slot = GuidanceSlot::query()->whereKey($booking->guidance_slot_id)->lockForUpdate()->firstOrFail();
             $lockedBooking = GuidanceBooking::query()->whereKey($booking->id)->lockForUpdate()->firstOrFail();
             $canCancel = $actor->is_active && ($actor->role === UserRole::Admin || ($actor->role === UserRole::Lecturer && $slot->lecturer->user_id === $actor->id));
@@ -36,5 +36,17 @@ class CancelGuidanceBookingByStaff
 
             return $lockedBooking->refresh();
         });
+
+        $cancelledBooking->load('student.user', 'slot');
+        app(SendWorkflowNotification::class)->handle(
+            $cancelledBooking->student->user,
+            'guidance_cancelled_by_staff',
+            'Jadwal bimbingan dibatalkan',
+            'Jadwal bimbingan Anda pada '.$cancelledBooking->slot->starts_at->format('d M Y H:i').' dibatalkan. Alasan: '.$reason,
+            route('guidance.student', absolute: false),
+            'Lihat jadwal',
+        );
+
+        return $cancelledBooking;
     }
 }

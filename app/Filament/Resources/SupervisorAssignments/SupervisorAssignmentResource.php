@@ -28,6 +28,8 @@ class SupervisorAssignmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
+    protected static ?int $navigationSort = 30;
+
     public static function form(Schema $schema): Schema
     {
         return SupervisorAssignmentForm::configure($schema);

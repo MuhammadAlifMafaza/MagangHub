@@ -13,13 +13,15 @@ class CancelGuidanceSlot
 {
     public function handle(GuidanceSlot $slot, Lecturer $lecturer, string $reason): GuidanceSlot
     {
-        return DB::transaction(function () use ($slot, $lecturer, $reason): GuidanceSlot {
+        $cancelledBookings = collect();
+        $cancelledSlot = DB::transaction(function () use ($slot, $lecturer, $reason, &$cancelledBookings): GuidanceSlot {
             $lockedSlot = GuidanceSlot::query()->whereKey($slot->id)->lockForUpdate()->firstOrFail();
 
             if ($lockedSlot->lecturer_id !== $lecturer->id || $lockedSlot->status !== GuidanceSlotStatus::Open) {
                 throw ValidationException::withMessages(['slot' => 'Slot tidak dapat dibatalkan.']);
             }
 
+            $cancelledBookings = $lockedSlot->bookings()->where('status', GuidanceBookingStatus::Booked)->with('student.user')->get();
             $lockedSlot->update(['status' => GuidanceSlotStatus::Cancelled, 'cancelled_at' => now(), 'cancel_reason' => $reason]);
             $lockedSlot->bookings()->where('status', GuidanceBookingStatus::Booked)->update([
                 'status' => GuidanceBookingStatus::Cancelled->value,
@@ -30,5 +32,18 @@ class CancelGuidanceSlot
 
             return $lockedSlot->refresh();
         });
+
+        foreach ($cancelledBookings as $booking) {
+            app(SendWorkflowNotification::class)->handle(
+                $booking->student->user,
+                'guidance_cancelled_by_lecturer',
+                'Jadwal bimbingan dibatalkan',
+                'Jadwal bimbingan pada '.$cancelledSlot->starts_at->format('d M Y H:i').' dibatalkan. Alasan: '.$reason,
+                route('guidance.student', absolute: false),
+                'Lihat jadwal',
+            );
+        }
+
+        return $cancelledSlot;
     }
 }

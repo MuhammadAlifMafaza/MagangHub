@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\PasswordResetOtpController;
 use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\StudentNotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -22,6 +23,9 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'student.account'])->prefix('mahasiswa')->group(function () {
     Route::get('/', StudentDashboardController::class)->name('dashboard');
+    Route::get('/notifikasi', [StudentNotificationController::class, 'index'])->name('mahasiswa.notifikasi.index');
+    Route::post('/notifikasi/{notification}/buka', [StudentNotificationController::class, 'open'])->name('mahasiswa.notifikasi.open');
+    Route::post('/notifikasi/baca-semua', [StudentNotificationController::class, 'markAllAsRead'])->name('mahasiswa.notifikasi.read-all');
 });
 
 Route::redirect('/dashboard', '/mahasiswa')->name('dashboard.legacy');

@@ -3,9 +3,11 @@
 namespace App\Actions;
 
 use App\Enums\ReviewStatus;
+use App\Filament\Pages\ReportDetails;
 use App\Models\ReportPeriod;
 use App\Models\ReportVersion;
 use App\Models\Student;
+use App\Models\SupervisorAssignment;
 use App\Models\WeeklyReport;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +76,7 @@ class SubmitReportVersion
                     abort_if($report->review_status === ReviewStatus::Approved, 409, 'Laporan yang disetujui tidak dapat diubah.');
                     $latestVersion = $report->versions()->orderByDesc('version_number')->lockForUpdate()->firstOrFail();
                     $hasReview = $latestVersion->review()->exists();
-                    abort_if($report->review_status !== ReviewStatus::RevisionRequested && ! ($report->review_status === ReviewStatus::PendingReview && ! $hasReview), 409, 'Versi laporan ini tidak dapat diganti.');
+                    abort_unless($this->canReplaceVersion($report->review_status, $hasReview), 409, 'Versi laporan ini tidak dapat diganti.');
                     $versionNumber = $latestVersion->version_number + 1;
                     $report->update(['review_status' => ReviewStatus::PendingReview]);
                 }
@@ -104,6 +106,30 @@ class SubmitReportVersion
             throw $exception;
         }
 
+        $assignment = SupervisorAssignment::query()
+            ->where('student_id', $period->internship->student_id)
+            ->with('lecturer.user')
+            ->coveringInstant($period->starts_on->copy()->startOfDay())
+            ->latest('assigned_at')
+            ->first();
+
+        if ($assignment?->lecturer?->user !== null) {
+            app(SendWorkflowNotification::class)->handle(
+                $assignment->lecturer->user,
+                'report_submitted',
+                'Laporan mingguan baru',
+                $student->user->name.' mengirim laporan periode '.$period->starts_on->format('d M Y').'.',
+                ReportDetails::getUrl(['report' => $result['report']], isAbsolute: false, panel: 'dosen'),
+                'Periksa laporan',
+            );
+        }
+
         return $result;
+    }
+
+    private function canReplaceVersion(ReviewStatus $reviewStatus, bool $hasReview): bool
+    {
+        return $reviewStatus === ReviewStatus::RevisionRequested
+            || ($reviewStatus === ReviewStatus::PendingReview && ! $hasReview);
     }
 }

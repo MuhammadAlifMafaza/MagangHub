@@ -15,7 +15,7 @@ class BookGuidanceSlot
 {
     public function handle(Student $student, GuidanceSlot $slot): GuidanceBooking
     {
-        return DB::transaction(function () use ($student, $slot): GuidanceBooking {
+        $booking = DB::transaction(function () use ($student, $slot): GuidanceBooking {
             $lockedStudent = Student::query()->lockForUpdate()->findOrFail($student->id);
             $lockedSlot = GuidanceSlot::query()->lockForUpdate()->findOrFail($slot->id);
             $cutoff = config('magang.guidance.booking_cutoff_hours');
@@ -38,5 +38,28 @@ class BookGuidanceSlot
 
             return $lockedSlot->bookings()->create(['student_id' => $lockedStudent->id, 'status' => GuidanceBookingStatus::Booked]);
         });
+
+        $booking->load('student.user', 'slot.lecturer.user');
+        $lecturerUser = $booking->slot->lecturer->user;
+        $studentUser = $booking->student->user;
+
+        app(SendWorkflowNotification::class)->handle(
+            $lecturerUser,
+            'guidance_booked',
+            'Jadwal bimbingan baru',
+            $studentUser->name.' memesan jadwal bimbingan pada '.$booking->slot->starts_at->format('d M Y H:i').'.',
+            '/dosen',
+            'Buka panel dosen',
+        );
+        app(SendWorkflowNotification::class)->handle(
+            $studentUser,
+            'guidance_booking_confirmed',
+            'Jadwal bimbingan terkonfirmasi',
+            'Jadwal bimbingan Anda pada '.$booking->slot->starts_at->format('d M Y H:i').' telah dikonfirmasi.',
+            route('guidance.student', absolute: false),
+            'Lihat jadwal',
+        );
+
+        return $booking;
     }
 }

@@ -16,6 +16,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Fortify;
+use Laravel\Passkeys\Contracts\PasskeyUser;
+use Laravel\Passkeys\Passkey;
 use Laravel\Passkeys\Passkeys;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -36,7 +38,9 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
-        Passkeys::authorizeLoginUsing(fn (Request $request, User $user): bool => $user->role === UserRole::Student && $user->is_active);
+        Passkeys::authorizeLoginUsing(fn (Request $request, PasskeyUser $passkeyUser, Passkey $passkey): bool => $passkeyUser instanceof User
+            && $passkeyUser->role === UserRole::Student
+            && $passkeyUser->is_active);
     }
 
     /**

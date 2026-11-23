@@ -9,6 +9,7 @@ use App\Enums\GuidanceBookingStatus;
 use App\Enums\GuidanceSlotStatus;
 use App\Filament\Dosen\Resources\GuidanceSlots\Pages\ManageGuidanceSlots;
 use App\Models\GuidanceSlot;
+use App\Models\Lecturer;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
@@ -22,6 +23,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
@@ -40,6 +42,8 @@ class GuidanceSlotResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
+    protected static ?int $navigationSort = 10;
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([]);
@@ -57,6 +61,14 @@ class GuidanceSlotResource extends Resource
                 TextColumn::make('status')->label('Status')->badge()
                     ->formatStateUsing(fn (GuidanceSlot $record): string => $record->availabilityLabel())
                     ->color(fn (GuidanceSlot $record): string => $record->availabilityColor()),
+            ])
+            ->filters([
+                SelectFilter::make('status')
+                    ->label('Status slot')
+                    ->options([
+                        GuidanceSlotStatus::Open->value => 'Tersedia',
+                        GuidanceSlotStatus::Cancelled->value => 'Dibatalkan',
+                    ]),
             ])
             ->recordActions([
                 Action::make('viewSlot')
@@ -94,7 +106,7 @@ class GuidanceSlotResource extends Resource
                     ->schema(self::slotFormSchema())
                     ->action(function (GuidanceSlot $record, array $data, UpdateGuidanceSlot $updateGuidanceSlot): void {
                         Gate::authorize('update', $record);
-                        $updateGuidanceSlot->handle($record, auth()->user()->lecturer, $data);
+                        $updateGuidanceSlot->handle($record, self::authenticatedLecturer(), self::slotFormData($data));
                     }),
                 Action::make('cancelSlot')
                     ->label('Batalkan')
@@ -105,7 +117,7 @@ class GuidanceSlotResource extends Resource
                     ->schema([Textarea::make('reason')->label('Alasan pembatalan')->required()->maxLength(255)])
                     ->action(function (GuidanceSlot $record, array $data, CancelGuidanceSlot $cancelGuidanceSlot): void {
                         Gate::authorize('update', $record);
-                        $cancelGuidanceSlot->handle($record, auth()->user()->lecturer, $data['reason']);
+                        $cancelGuidanceSlot->handle($record, self::authenticatedLecturer(), $data['reason']);
                     }),
             ])
             ->headerActions([
@@ -118,9 +130,12 @@ class GuidanceSlotResource extends Resource
                     ->schema(self::slotFormSchema())
                     ->action(function (array $data, CreateGuidanceSlot $createGuidanceSlot): void {
                         Gate::authorize('create', GuidanceSlot::class);
-                        $createGuidanceSlot->handle(auth()->user()->lecturer, $data);
+                        $createGuidanceSlot->handle(self::authenticatedLecturer(), self::slotFormData($data));
                     }),
             ])
+            ->emptyStateIcon(Heroicon::OutlinedCalendarDays)
+            ->emptyStateHeading('Belum ada slot bimbingan')
+            ->emptyStateDescription('Buat slot waktu agar mahasiswa dapat memilih jadwal bimbingan.')
             ->toolbarActions([]);
     }
 
@@ -175,7 +190,7 @@ class GuidanceSlotResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $lecturer = auth()->user()?->lecturer;
-        abort_unless($lecturer, 403);
+        abort_unless($lecturer !== null, 403);
 
         return parent::getEloquentQuery()
             ->where('lecturer_id', $lecturer->id)
@@ -185,5 +200,29 @@ class GuidanceSlotResource extends Resource
     public static function getPages(): array
     {
         return ['index' => ManageGuidanceSlots::route('/')];
+    }
+
+    private static function authenticatedLecturer(): Lecturer
+    {
+        $lecturer = auth()->user()?->lecturer;
+        abort_unless($lecturer !== null, 403);
+
+        return $lecturer;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array{starts_at: string, ends_at: string, capacity: int, location?: string|null}
+     */
+    private static function slotFormData(array $data): array
+    {
+        $normalizedData = [
+            'starts_at' => (string) $data['starts_at'],
+            'ends_at' => (string) $data['ends_at'],
+            'capacity' => (int) ($data['capacity'] ?? config('magang.guidance.default_capacity')),
+            'location' => isset($data['location']) ? (string) $data['location'] : null,
+        ];
+
+        return $normalizedData;
     }
 }

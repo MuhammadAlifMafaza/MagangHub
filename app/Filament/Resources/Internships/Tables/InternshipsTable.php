@@ -50,6 +50,9 @@ class InternshipsTable
                     ->action(fn (Internship $record, array $data): Internship => app(UpdateInternship::class)
                         ->handle(auth()->user(), $record, $data)),
             ])
+            ->emptyStateIcon(Heroicon::OutlinedBriefcase)
+            ->emptyStateHeading('Belum ada data magang')
+            ->emptyStateDescription('Tambahkan data magang mahasiswa untuk mengatur periode laporan dan pembimbingan.')
             ->toolbarActions([]);
     }
 }

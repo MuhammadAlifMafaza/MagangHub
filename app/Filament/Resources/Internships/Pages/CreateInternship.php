@@ -31,9 +31,15 @@ class CreateInternship extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $student = Student::query()->findOrFail($data['student_id']);
-        unset($data['student_id']);
+        $studentId = $data['student_id'] ?? null;
+        abort_unless(is_int($studentId) || is_string($studentId), 422);
+        $student = Student::query()->findOrFail($studentId);
 
-        return app(CreateInternshipAction::class)->handle($student, $data);
+        return app(CreateInternshipAction::class)->handle($student, [
+            'company_name' => (string) $data['company_name'],
+            'company_supervisor_name' => isset($data['company_supervisor_name']) ? (string) $data['company_supervisor_name'] : null,
+            'start_date' => (string) $data['start_date'],
+            'end_date' => (string) $data['end_date'],
+        ]);
     }
 }

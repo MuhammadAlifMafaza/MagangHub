@@ -65,7 +65,7 @@
                                     <div class="flex shrink-0 flex-wrap gap-2">
                                         @if ($fileAvailability->get($version->getKey(), false))
                                             @if ($version->mime_type === 'application/pdf')
-                                                <a href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
+                                                <a href="{{ route('laporan.versi.viewer', $version) }}" class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
                                             @endif
                                             <a href="{{ route('laporan.versi.download', $version) }}" class="inline-flex min-h-10 items-center justify-center gap-2 self-start rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
                                         @else
@@ -189,7 +189,7 @@
                             <div class="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                                 @if ($fileAvailability->get($version->getKey(), false))
                                     @if ($version->mime_type === 'application/pdf')
-                                        <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
+                                        <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.viewer', $version) }}"><flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF</a>
                                     @endif
                                     <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.download', $version) }}"><flux:icon.arrow-down-tray variant="outline" class="size-4" />Unduh berkas</a>
                                 @else
@@ -330,7 +330,7 @@
                             @if ($fileAvailability->get($version->getKey(), false))
                                 <x-ui.status-badge label="Berkas tersedia" tone="success" />
                                 @if ($version->mime_type === 'application/pdf')
-                                    <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.preview', $version) }}" target="_blank" rel="noopener">
+                                    <a class="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line-input px-3 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700" href="{{ route('laporan.versi.viewer', $version) }}">
                                         <flux:icon.document-magnifying-glass variant="outline" class="size-4" />Baca PDF
                                     </a>
                                 @endif

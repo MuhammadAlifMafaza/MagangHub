@@ -8,6 +8,8 @@ use App\Models\WeeklyReport;
 use App\Policies\AssessmentPolicy;
 use App\Policies\WeeklyReportPolicy;
 use Carbon\CarbonImmutable;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -30,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        Table::configureUsing(static function (Table $table): void {
+            $table
+                ->striped()
+                ->filtersLayout(FiltersLayout::AboveContentCollapsible)
+                ->paginationPageOptions([10, 25, 50]);
+        });
         Gate::policy(WeeklyReport::class, WeeklyReportPolicy::class);
         Gate::policy(ReportVersion::class, WeeklyReportPolicy::class);
         Gate::policy(Assessment::class, AssessmentPolicy::class);

@@ -43,7 +43,7 @@ class AdministrativeRecap extends Page implements HasTable
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 20;
 
     public string $studentFilter = '';
 
@@ -171,7 +171,7 @@ class AdministrativeRecap extends Page implements HasTable
                     ->weight('medium'),
                 TextColumn::make('activeSupervisor')
                     ->label('Dosen pembimbing')
-                    ->state(fn (ReportPeriod $record): string => $record->internship->student->supervisorAssignments->first()?->lecturer?->user?->name ?? '—'),
+                    ->state(fn (ReportPeriod $record): string => $record->internship->student->supervisorAssignments->first()?->lecturer->user->name ?? '—'),
                 TextColumn::make('week_number')
                     ->label('Minggu')
                     ->formatStateUsing(fn (int|string $state): string => 'Minggu ke-'.$state),
@@ -301,6 +301,7 @@ class AdministrativeRecap extends Page implements HasTable
         ];
     }
 
+    /** @return Builder<ReportPeriod> */
     private function filteredPeriods(): Builder
     {
         $query = $this->applyReportPeriodFilters(
@@ -360,11 +361,15 @@ class AdministrativeRecap extends Page implements HasTable
         return $query->orderByDesc('starts_on')->orderByDesc('id');
     }
 
+    /** @return Builder<WeeklyReport> */
     private function filteredWeeklyReports(): Builder
     {
         return WeeklyReport::query()->whereHas('reportPeriod', fn (Builder $periods): Builder => $this->applyReportPeriodFilters($periods));
     }
 
+    /** @param Builder<ReportPeriod> $query
+     * @return Builder<ReportPeriod>
+     */
     private function applyReportPeriodFilters(Builder $query, bool $includeWeekFilter = true): Builder
     {
         return $query
@@ -442,14 +447,17 @@ class AdministrativeRecap extends Page implements HasTable
             ->get()
             ->map(fn (Lecturer $lecturer): array => [
                 'lecturer' => $lecturer,
-                'slots' => (int) ($slots->get($lecturer->id)?->slot_count ?? 0),
-                'booked' => (int) ($bookings->get($lecturer->id)?->booked_count ?? 0),
-                'completed' => (int) ($bookings->get($lecturer->id)?->completed_count ?? 0),
-                'no_show' => (int) ($bookings->get($lecturer->id)?->no_show_count ?? 0),
+                'slots' => (int) ($slots->get($lecturer->id)->slot_count ?? 0),
+                'booked' => (int) ($bookings->get($lecturer->id)->booked_count ?? 0),
+                'completed' => (int) ($bookings->get($lecturer->id)->completed_count ?? 0),
+                'no_show' => (int) ($bookings->get($lecturer->id)->no_show_count ?? 0),
             ])
             ->all();
     }
 
+    /** @param Builder<GuidanceSlot>|Builder<GuidanceBooking> $query
+     * @return Builder<GuidanceSlot>|Builder<GuidanceBooking>
+     */
     private function constrainToMatchingPeriods(Builder $query, bool $matchBookingStudent = false): Builder
     {
         $matchingPeriods = ReportPeriod::query()

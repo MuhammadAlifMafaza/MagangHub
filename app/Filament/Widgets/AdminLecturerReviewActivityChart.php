@@ -54,7 +54,15 @@ class AdminLecturerReviewActivityChart extends ChartWidget
             ->get();
 
         if ($reviews->isEmpty()) {
-            return [];
+            return [
+                'labels' => [],
+                'datasets' => [[
+                    'label' => 'Pemeriksaan',
+                    'data' => [],
+                    'backgroundColor' => '#4880DC',
+                    'borderRadius' => 4,
+                ]],
+            ];
         }
 
         return [

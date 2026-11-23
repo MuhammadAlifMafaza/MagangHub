@@ -41,7 +41,7 @@ class StudentGuidance extends Component
         $slotId = $this->bookingToConfirm;
         abort_unless($slotId !== null, 404);
         $student = Auth::user()?->student;
-        abort_unless($student, 403);
+        abort_unless($student !== null, 403);
 
         $lecturer = $student->activeSupervisorAssignment()->with('lecturer')->first()?->lecturer;
         abort_unless($lecturer instanceof Lecturer, 403);
@@ -62,7 +62,7 @@ class StudentGuidance extends Component
     public function cancel(int $bookingId, CancelGuidanceBooking $action): void
     {
         $student = Auth::user()?->student;
-        abort_unless($student, 403);
+        abort_unless($student !== null, 403);
 
         $this->validate(['cancelReason' => ['nullable', 'string', 'max:1000']]);
         $booking = $student->guidanceBookings()->whereKey($bookingId)->firstOrFail();
@@ -79,7 +79,7 @@ class StudentGuidance extends Component
     public function render(): mixed
     {
         $student = Auth::user()?->student;
-        abort_unless($student, 403);
+        abort_unless($student !== null, 403);
 
         $assignment = $student->activeSupervisorAssignment()->with('lecturer.user')->first();
         $lecturer = $assignment?->lecturer;

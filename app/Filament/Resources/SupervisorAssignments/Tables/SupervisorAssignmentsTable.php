@@ -46,6 +46,9 @@ class SupervisorAssignmentsTable
                     ->action(fn (SupervisorAssignment $record, array $data) => app(EndSupervisorAssignment::class)
                         ->handle($record, auth()->user(), $data['end_reason'])),
             ])
+            ->emptyStateIcon(Heroicon::OutlinedUserGroup)
+            ->emptyStateHeading('Belum ada penugasan pembimbing')
+            ->emptyStateDescription('Tugaskan dosen pembimbing kepada mahasiswa agar proses bimbingan dapat dimulai.')
             ->toolbarActions([]);
     }
 }

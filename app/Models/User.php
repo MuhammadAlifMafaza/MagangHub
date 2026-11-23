@@ -33,6 +33,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
  * @property string|null $remember_token
+ * @property-read Student|null $student
+ * @property-read Lecturer|null $lecturer
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -59,16 +61,19 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Pas
         ];
     }
 
+    /** @return HasOne<Student, $this> */
     public function student(): HasOne
     {
         return $this->hasOne(Student::class);
     }
 
+    /** @return HasOne<Lecturer, $this> */
     public function lecturer(): HasOne
     {
         return $this->hasOne(Lecturer::class);
     }
 
+    /** @return HasMany<SupervisorAssignment, $this> */
     public function assignedSupervisorAssignments(): HasMany
     {
         return $this->hasMany(SupervisorAssignment::class, 'assigned_by');

@@ -12,7 +12,7 @@ Route::middleware(['auth', 'student.account'])->group(function () {
     Route::livewire('settings/appearance', 'pages::settings.appearance')->name('appearance.edit');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'account.active'])->group(function () {
     Route::livewire('settings/security', 'pages::settings.security')
         ->middleware([
             'password.confirm',

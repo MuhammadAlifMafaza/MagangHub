@@ -17,7 +17,7 @@ class RecordGuidanceBookingOutcome
             throw ValidationException::withMessages(['status' => 'Hasil bimbingan tidak valid.']);
         }
 
-        return DB::transaction(function () use ($booking, $lecturer, $outcome, $notes): GuidanceBooking {
+        $updatedBooking = DB::transaction(function () use ($booking, $lecturer, $outcome, $notes): GuidanceBooking {
             $slot = GuidanceSlot::query()->whereKey($booking->guidance_slot_id)->lockForUpdate()->firstOrFail();
             $lockedBooking = GuidanceBooking::query()->whereKey($booking->id)->lockForUpdate()->firstOrFail();
 
@@ -29,5 +29,18 @@ class RecordGuidanceBookingOutcome
 
             return $lockedBooking->refresh();
         });
+
+        $updatedBooking->load('student.user', 'slot');
+        $outcomeText = $outcome === GuidanceBookingStatus::Completed ? 'Selesai' : 'Tidak hadir';
+        app(SendWorkflowNotification::class)->handle(
+            $updatedBooking->student->user,
+            'guidance_outcome_recorded',
+            'Hasil bimbingan dicatat',
+            'Dosen mencatat hasil bimbingan Anda: '.$outcomeText.'.'.($notes ? ' Catatan: '.$notes : ''),
+            route('guidance.student', absolute: false),
+            'Lihat jadwal',
+        );
+
+        return $updatedBooking;
     }
 }

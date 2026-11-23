@@ -13,7 +13,7 @@ class InternshipPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->role === UserRole::Admin;
+        return $user->is_active && $user->role === UserRole::Admin;
     }
 
     /**
@@ -22,15 +22,12 @@ class InternshipPolicy
     public function view(User $user, Internship $internship): bool
     {
         return match ($user->role) {
-            UserRole::Admin => true,
-            UserRole::Lecturer => $internship->student->supervisorAssignments()
+            UserRole::Admin => $user->is_active,
+            UserRole::Lecturer => $user->is_active && $internship->student->supervisorAssignments()
                 ->where('lecturer_id', $user->lecturer?->id)
-                ->where(function ($query): void {
-                    $query->where('status', 'active')
-                        ->orWhere('status', config('magang.supervisor_assignments.lecturer_historical_read_status', 'ended'));
-                })
+                ->where('status', 'active')
                 ->exists(),
-            UserRole::Student => $internship->student->user_id === $user->id,
+            UserRole::Student => $user->is_active && $internship->student->user_id === $user->id,
         };
     }
 
@@ -39,7 +36,7 @@ class InternshipPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === UserRole::Admin;
+        return $user->is_active && $user->role === UserRole::Admin;
     }
 
     /**
@@ -47,7 +44,7 @@ class InternshipPolicy
      */
     public function update(User $user, Internship $internship): bool
     {
-        return $user->role === UserRole::Admin;
+        return $user->is_active && $user->role === UserRole::Admin;
     }
 
     /**

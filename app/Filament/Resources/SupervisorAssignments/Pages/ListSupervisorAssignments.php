@@ -15,6 +15,7 @@ class ListSupervisorAssignments extends ListRecords
     {
         return [
             CreateAction::make()
+                ->label('Tambah penugasan')
                 ->icon(Heroicon::OutlinedPlus),
         ];
     }

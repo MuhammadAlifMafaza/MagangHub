@@ -6,6 +6,7 @@ use App\Enums\AssessmentStatus;
 use App\Enums\ReviewStatus;
 use App\Models\Assessment;
 use App\Models\Lecturer;
+use App\Models\SupervisorAssignment;
 use App\Models\WeeklyReport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -20,8 +21,11 @@ class SaveAssessment
 
         return DB::transaction(function () use ($lecturer, $report, $score, $notes): Assessment {
             $report = WeeklyReport::query()->with('reportPeriod.internship')->whereKey($report->id)->lockForUpdate()->firstOrFail();
-            $assigned = $report->reportPeriod->internship->student->supervisorAssignments()
-                ->where('lecturer_id', $lecturer->id)->where('status', 'active')->exists();
+            $assigned = SupervisorAssignment::query()
+                ->where('student_id', $report->reportPeriod->internship->student_id)
+                ->where('lecturer_id', $lecturer->id)
+                ->coveringInstant($report->reportPeriod->starts_on->copy()->startOfDay())
+                ->exists();
             abort_unless($assigned, 403);
             abort_unless($report->review_status === ReviewStatus::Approved, 409);
 

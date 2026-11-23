@@ -13,16 +13,22 @@
 
             <flux:sidebar.nav aria-label="Navigasi utama">
                 <div class="grid gap-1">
-                    <p class="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">Menu utama</p>
+                    @if (auth()->user()->role === \App\Enums\UserRole::Student)
+                        <p class="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">Beranda</p>
+                    @endif
                     <a href="{{ route('dashboard') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('dashboard'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('dashboard')]) @if (request()->routeIs('dashboard')) aria-current="page" @endif wire:navigate>
                         <flux:icon.home variant="outline" class="size-5 shrink-0" />
                         <span>Dashboard</span>
                     </a>
+
                     @if (auth()->user()->role === \App\Enums\UserRole::Student)
+                        <p class="mt-3 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">Pembimbingan</p>
                         <a href="{{ route('guidance.student') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('guidance.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('guidance.*')]) @if (request()->routeIs('guidance.*')) aria-current="page" @endif wire:navigate>
                             <flux:icon.calendar-days variant="outline" class="size-5 shrink-0" />
-                            <span>Jadwal Pembimbingan</span>
+                            <span>Jadwal Bimbingan</span>
                         </a>
+
+                        <p class="mt-3 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">Laporan</p>
                         <a href="{{ route('mahasiswa.laporan.index') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('mahasiswa.laporan.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('mahasiswa.laporan.*')]) @if (request()->routeIs('mahasiswa.laporan.*')) aria-current="page" @endif wire:navigate>
                             <flux:icon.document-text variant="outline" class="size-5 shrink-0" />
                             <span>Laporan Mingguan</span>
@@ -34,10 +40,15 @@
             <flux:spacer />
 
             <flux:sidebar.nav aria-label="Pengaturan akun">
-                <a href="{{ route('profile.edit') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('profile.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('profile.*')]) @if (request()->routeIs('profile.*')) aria-current="page" @endif wire:navigate>
-                    <flux:icon.user-circle variant="outline" class="size-5 shrink-0" />
-                    <span>Profil</span>
-                </a>
+                @if (auth()->user()->role === \App\Enums\UserRole::Student)
+                    <a href="{{ route('mahasiswa.notifikasi.index') }}" @class(['flex min-h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700', 'bg-primary-50 text-primary-700 dark:text-sky-300' => request()->routeIs('mahasiswa.notifikasi.*'), 'text-ink hover:bg-primary-50 hover:text-primary-700' => ! request()->routeIs('mahasiswa.notifikasi.*')]) @if (request()->routeIs('mahasiswa.notifikasi.*')) aria-current="page" @endif wire:navigate>
+                        <flux:icon.bell variant="outline" class="size-5 shrink-0" />
+                        <span class="flex-1">Notifikasi</span>
+                        @if (($unreadNotificationsCount = auth()->user()->unreadNotifications()->count()) > 0)
+                            <span class="rounded-full bg-primary-700 px-2 py-0.5 text-xs font-semibold text-white" aria-label="{{ $unreadNotificationsCount }} notifikasi belum dibaca">{{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}</span>
+                        @endif
+                    </a>
+                @endif
             </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
@@ -77,8 +88,11 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                        <flux:menu.item :href="route('profile.edit')" icon="user-circle" wire:navigate>
                             Profil
+                        </flux:menu.item>
+                        <flux:menu.item :href="route('security.edit')" icon="cog-6-tooth" wire:navigate>
+                            Pengaturan
                         </flux:menu.item>
                     </flux:menu.radio.group>
 

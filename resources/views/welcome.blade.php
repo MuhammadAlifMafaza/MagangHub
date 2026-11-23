@@ -56,7 +56,8 @@
                             <div class="my-1 border-t border-line"></div>
                             <a href="{{ $panelUrl }}" class="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-ink transition hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Buka panel</a>
                             @if ($user->role === \App\Enums\UserRole::Student)
-                                <a href="{{ route('profile.edit') }}" class="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-ink transition hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Profil dan pengaturan</a>
+                                <a href="{{ route('profile.edit') }}" class="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-ink transition hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Profil</a>
+                                <a href="{{ route('security.edit') }}" class="flex min-h-10 items-center rounded-lg px-3 text-sm font-medium text-ink transition hover:bg-primary-50 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-700">Pengaturan</a>
                             @endif
                             <div class="my-1 border-t border-line"></div>
                             <form method="POST" action="{{ route('logout') }}">

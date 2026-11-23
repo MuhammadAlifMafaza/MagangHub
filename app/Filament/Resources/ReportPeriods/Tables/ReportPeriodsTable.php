@@ -33,8 +33,12 @@ class ReportPeriodsTable
             ])
             ->recordActions([
                 EditAction::make()
+                    ->label('Ubah batas waktu')
                     ->icon(Heroicon::OutlinedPencilSquare),
             ])
+            ->emptyStateIcon(Heroicon::OutlinedCalendarDays)
+            ->emptyStateHeading('Belum ada periode laporan')
+            ->emptyStateDescription('Periode laporan akan muncul setelah data magang mahasiswa dibuat.')
             ->toolbarActions([]);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\ReportPeriod;
 use App\Models\ReportVersion;
-use Carbon\CarbonInterface;
+use Carbon\CarbonImmutable;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Database\Query\JoinClause;
 
@@ -33,10 +33,12 @@ class AdminReportSubmissionTrendChart extends ChartWidget
      */
     protected function getData(): array
     {
-        $currentWeekStart = today()->startOfWeek();
-        $weekStarts = collect(range(7, 0))
-            ->map(fn (int $weeksAgo): CarbonInterface => $currentWeekStart->copy()->subWeeks($weeksAgo));
-        $rangeStart = $weekStarts->first();
+        $currentWeekStart = CarbonImmutable::now(config('magang.timezone'))->startOfWeek();
+        $weekStarts = array_map(
+            fn (int $weeksAgo): CarbonImmutable => $currentWeekStart->subWeeks($weeksAgo),
+            range(7, 0),
+        );
+        $rangeStart = $weekStarts[0];
         $rangeEnd = $currentWeekStart->copy()->addWeek();
 
         $firstVersionNumbers = ReportVersion::query()
@@ -90,26 +92,33 @@ class AdminReportSubmissionTrendChart extends ChartWidget
             }
         }
 
+        $monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
         return [
-            'labels' => $weekStarts
-                ->map(fn (CarbonInterface $weekStart): string => $weekStart->locale('id')->translatedFormat('d M'))
-                ->all(),
+            'labels' => array_map(
+                function (CarbonImmutable|string $weekStart) use ($monthLabels): string {
+                    $date = CarbonImmutable::parse($weekStart);
+
+                    return $date->format('d').' '.$monthLabels[(int) $date->format('n') - 1];
+                },
+                $weekStarts,
+            ),
             'datasets' => [
                 [
                     'label' => 'Tepat waktu',
-                    'data' => array_values(array_column($weeklyCounts, 'onTime')),
+                    'data' => array_column($weeklyCounts, 'onTime'),
                     'backgroundColor' => '#15803D',
                     'borderRadius' => 4,
                 ],
                 [
                     'label' => 'Terlambat',
-                    'data' => array_values(array_column($weeklyCounts, 'late')),
+                    'data' => array_column($weeklyCounts, 'late'),
                     'backgroundColor' => '#B45309',
                     'borderRadius' => 4,
                 ],
                 [
                     'label' => 'Belum dikumpulkan',
-                    'data' => array_values(array_column($weeklyCounts, 'missing')),
+                    'data' => array_column($weeklyCounts, 'missing'),
                     'backgroundColor' => '#B91C1C',
                     'borderRadius' => 4,
                 ],

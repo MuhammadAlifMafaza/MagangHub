@@ -12,6 +12,7 @@ class SaveAssessmentRequest extends FormRequest
         return $this->user()?->role === UserRole::Lecturer && $this->user()->can('assess', $this->route('report'));
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function rules(): array
     {
         return ['score' => ['required', 'numeric', 'between:0,100'], 'notes' => ['nullable', 'string', 'max:10000']];

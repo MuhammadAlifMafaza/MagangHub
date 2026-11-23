@@ -39,7 +39,7 @@ class LecturerGuidanceStats extends Widget
         $reportStatusCounts = WeeklyReport::query()
             ->whereHas('reportPeriod.internship.student.supervisorAssignments', fn (Builder $query): Builder => $query
                 ->where('lecturer_id', $lecturerId)
-                ->where('status', 'active'))
+                ->coveringPeriodStart())
             ->selectRaw('review_status, COUNT(*) as aggregate')
             ->groupBy('review_status')
             ->pluck('aggregate', 'review_status');
@@ -74,7 +74,7 @@ class LecturerGuidanceStats extends Widget
                     ->where('status', AssessmentStatus::Draft)
                     ->whereHas('weeklyReport.reportPeriod.internship.student.supervisorAssignments', fn (Builder $query): Builder => $query
                         ->where('lecturer_id', $lecturerId)
-                        ->where('status', 'active'))
+                        ->coveringPeriodStart())
                     ->count(),
             ],
             'reportStatuses' => $reportStatuses,

@@ -16,7 +16,19 @@ class ReportReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'weekly_report_id' => fn (array $attributes) => ReportVersion::find($attributes['report_version_id'])->weekly_report_id,
+            'weekly_report_id' => function (array $attributes): int {
+                $reportVersionId = $attributes['report_version_id'] ?? null;
+
+                if ($reportVersionId instanceof ReportVersion) {
+                    return $reportVersionId->weekly_report_id;
+                }
+
+                if (! is_int($reportVersionId) && ! is_string($reportVersionId)) {
+                    throw new \LogicException('The report version factory did not provide a valid report version ID.');
+                }
+
+                return ReportVersion::query()->whereKey($reportVersionId)->firstOrFail()->weekly_report_id;
+            },
             'report_version_id' => ReportVersion::factory(), 'lecturer_id' => Lecturer::factory(),
             'decision' => ReportReviewDecision::Approved, 'feedback' => null, 'reviewed_at' => now(),
         ];
