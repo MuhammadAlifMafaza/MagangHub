@@ -13,7 +13,7 @@
         @fluxAppearance
     </head>
     <body class="min-h-screen bg-bg font-sans text-ink antialiased">
-        <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-3 focus:text-primary-700 focus:shadow-lg">Lewati ke konten utama</a>
+        <a href="#home" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-3 focus:text-primary-700 focus:shadow-lg">Lewati ke konten utama</a>
 
         <header class="sticky top-0 z-40 border-b border-line bg-surface/95 shadow-sm backdrop-blur">
             <nav aria-label="Navigasi utama" class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
@@ -23,6 +23,7 @@
                 </a>
 
                 <div class="hidden items-center gap-6 md:flex">
+                    <a href="#home" class="text-sm font-medium text-ink-muted transition hover:text-primary-700">Home</a>
                     <a href="#fitur" class="text-sm font-medium text-ink-muted transition hover:text-primary-700">Fitur</a>
                     <a href="#alur" class="text-sm font-medium text-ink-muted transition hover:text-primary-700">Alur penggunaan</a>
                     <a href="#institusi" class="text-sm font-medium text-ink-muted transition hover:text-primary-700">Tentang</a>
@@ -72,7 +73,7 @@
             </nav>
         </header>
 
-        <main id="main-content" tabindex="-1">
+        <main id="home" tabindex="-1">
             <section class="relative isolate overflow-hidden bg-linear-to-br from-primary-800 via-primary-700 to-primary-800 text-white">
                 <div aria-hidden="true" class="absolute -end-24 -top-24 -z-10 size-96 rounded-full border-[48px] border-white/5"></div>
                 <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">

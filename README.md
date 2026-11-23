@@ -49,42 +49,13 @@ Akun pengguna dikelola oleh admin. Mahasiswa dan dosen masuk melalui halaman log
 
 ### Siklus magang dan laporan
 
-```mermaid
-flowchart TD
-    A([Mulai]) --> B[Admin membuat akun mahasiswa dan dosen]
-    B --> C[Admin mencatat data magang mahasiswa]
-    C --> D[Sistem membentuk periode laporan mingguan]
-    B --> E[Admin menugaskan dosen pembimbing]
-    D --> F[Mahasiswa membuka periode laporan]
-    E --> G[Dosen menerima laporan dari mahasiswa bimbingannya]
-    F --> H[Mahasiswa mengunggah laporan PDF atau DOCX]
-    H --> I[Dosen memeriksa laporan]
-    I --> J{Keputusan pemeriksaan}
-    J -->|Minta revisi| K[Mahasiswa membaca umpan balik]
-    K --> H
-    J -->|Setujui| L[Dosen menyimpan draf nilai]
-    L --> M[Dosen menerbitkan nilai]
-    M --> N[Mahasiswa melihat status dan nilai]
-    N --> O([Selesai])
-```
+![Diagram alur laporan MagangHub](public/images/brand/alur-laporan-maganghub.svg)
 
 Periode laporan dibuat otomatis ketika data magang dibuat. Laporan yang terlambat tetap dapat dikirim dan ditandai sebagai terlambat. Persetujuan laporan mengunci versi yang disetujui; nilai yang sudah diterbitkan bersifat final.
 
 ### Siklus bimbingan
 
-```mermaid
-flowchart TD
-    A[Dosen membuat slot bimbingan] --> B[Slot tersedia bagi mahasiswa bimbingan]
-    B --> C[Mahasiswa memilih dan memesan slot]
-    C --> D[Dosen melihat pemesanan]
-    D --> E{Hasil bimbingan}
-    E -->|Sesi berlangsung| F[Dosen mencatat sesi selesai dan catatan]
-    E -->|Mahasiswa tidak hadir| G[Dosen mencatat tidak hadir]
-    C -->|Dibatalkan| H[Pemesanan dibatalkan sesuai aturan]
-    F --> I[Status dan notifikasi diperbarui]
-    G --> I
-    H --> I
-```
+![Diagram alur bimbingan MagangHub](public/images/brand/alur-bimbingan-maganghub.svg)
 
 ## Teknologi
 

@@ -1,0 +1,85 @@
+<svg width="1200" height="480" viewBox="0 0 1200 480" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+    <title id="title">Siklus bimbingan MagangHub</title>
+    <desc id="description">Dosen membuat slot, mahasiswa memesan, dosen mencatat hasil sesi, lalu sistem memperbarui status dan mengirim notifikasi.</desc>
+    <defs>
+        <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+            <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1C3155" flood-opacity="0.06"/>
+        </filter>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0 0L10 5L0 10Z" fill="#3B5C89"/>
+        </marker>
+        <marker id="return-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0 0L10 5L0 10Z" fill="#15803D"/>
+        </marker>
+    </defs>
+
+    <rect width="1200" height="480" rx="20" fill="#F4F7FB"/>
+    <rect x="1" y="1" width="1198" height="478" rx="19" stroke="#DFE7F0" stroke-width="2"/>
+
+    <text x="48" y="42" fill="#3B5C89" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.4">MAGANGHUB  /  ALUR KERJA</text>
+    <text x="48" y="78" fill="#1C3155" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="25" font-weight="700">Siklus bimbingan</text>
+    <text x="48" y="103" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="14">Dari pembuatan slot sampai hasil sesi tercatat dan diperbarui</text>
+
+    <line x1="280" y1="222" x2="315" y2="222" stroke="#3B5C89" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="575" y1="222" x2="610" y2="222" stroke="#3B5C89" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="870" y1="222" x2="905" y2="222" stroke="#3B5C89" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g filter="url(#shadow)">
+        <rect x="35" y="140" width="245" height="164" rx="14" fill="#FFFFFF" stroke="#DFE7F0" stroke-width="1.5"/>
+        <rect x="35" y="140" width="245" height="4" rx="2" fill="#3B5C89"/>
+        <circle cx="60" cy="169" r="13" fill="#EDF2F8"/>
+        <text x="60" y="174" text-anchor="middle" fill="#1C3155" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13" font-weight="700">1</text>
+        <rect x="82" y="156" width="67" height="25" rx="12.5" fill="#EDF2F8"/>
+        <text x="115" y="173" text-anchor="middle" fill="#1C3155" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="11" font-weight="700">DOSEN</text>
+        <text x="52" y="211" fill="#1F2E43" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="15" font-weight="700">Membuka jadwal</text>
+        <text x="52" y="237" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">Tentukan waktu, lokasi,</text>
+        <text x="52" y="257" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">dan kapasitas slot bimbingan</text>
+    </g>
+
+    <g filter="url(#shadow)">
+        <rect x="330" y="140" width="245" height="164" rx="14" fill="#FFFFFF" stroke="#DFE7F0" stroke-width="1.5"/>
+        <rect x="330" y="140" width="245" height="4" rx="2" fill="#B45309"/>
+        <circle cx="355" cy="169" r="13" fill="#FEF3C7"/>
+        <text x="355" y="174" text-anchor="middle" fill="#92400E" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13" font-weight="700">2</text>
+        <rect x="377" y="156" width="112" height="25" rx="12.5" fill="#FEF3C7"/>
+        <text x="433" y="173" text-anchor="middle" fill="#92400E" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="11" font-weight="700">MAHASISWA</text>
+        <text x="347" y="211" fill="#1F2E43" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="15" font-weight="700">Memesan bimbingan</text>
+        <text x="347" y="237" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">Pilih slot dosen yang</text>
+        <text x="347" y="257" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">masih tersedia</text>
+    </g>
+
+    <g filter="url(#shadow)">
+        <rect x="625" y="140" width="245" height="164" rx="14" fill="#FFFFFF" stroke="#DFE7F0" stroke-width="1.5"/>
+        <rect x="625" y="140" width="245" height="4" rx="2" fill="#3B5C89"/>
+        <circle cx="650" cy="169" r="13" fill="#EDF2F8"/>
+        <text x="650" y="174" text-anchor="middle" fill="#1C3155" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13" font-weight="700">3</text>
+        <rect x="672" y="156" width="67" height="25" rx="12.5" fill="#EDF2F8"/>
+        <text x="705" y="173" text-anchor="middle" fill="#1C3155" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="11" font-weight="700">DOSEN</text>
+        <text x="642" y="211" fill="#1F2E43" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="15" font-weight="700">Mencatat hasil sesi</text>
+        <text x="642" y="237" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">Tandai selesai, tidak hadir,</text>
+        <text x="642" y="257" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">atau batalkan pemesanan</text>
+    </g>
+
+    <g filter="url(#shadow)">
+        <rect x="920" y="140" width="245" height="164" rx="14" fill="#FFFFFF" stroke="#DFE7F0" stroke-width="1.5"/>
+        <rect x="920" y="140" width="245" height="4" rx="2" fill="#15803D"/>
+        <circle cx="945" cy="169" r="13" fill="#DCFCE7"/>
+        <text x="945" y="174" text-anchor="middle" fill="#166534" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13" font-weight="700">4</text>
+        <rect x="967" y="156" width="82" height="25" rx="12.5" fill="#DCFCE7"/>
+        <text x="1008" y="173" text-anchor="middle" fill="#166534" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="11" font-weight="700">SISTEM</text>
+        <text x="937" y="211" fill="#1F2E43" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="15" font-weight="700">Memperbarui status</text>
+        <text x="937" y="237" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">Ketersediaan slot dan</text>
+        <text x="937" y="257" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">notifikasi ikut diperbarui</text>
+    </g>
+
+    <path d="M1042 304V333H452V306" stroke="#15803D" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#return-arrow)"/>
+    <rect x="697" y="320" width="135" height="24" rx="12" fill="#F4F7FB"/>
+    <text x="764" y="336" text-anchor="middle" fill="#166534" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="12" font-weight="600">Pembaruan status</text>
+
+    <rect x="200" y="372" width="800" height="70" rx="14" fill="#FFFFFF" stroke="#DFE7F0" stroke-width="1.5"/>
+    <rect x="200" y="372" width="5" height="70" rx="2.5" fill="#15803D"/>
+    <circle cx="232" cy="407" r="12" fill="#DCFCE7"/>
+    <path d="M232 400V408M232 413V414" stroke="#15803D" stroke-width="2" stroke-linecap="round"/>
+    <text x="258" y="402" fill="#1C3155" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="14" font-weight="700">Riwayat sesi bimbingan tersimpan terpusat</text>
+    <text x="258" y="423" fill="#556579" font-family="Inter, ui-sans-serif, Arial, sans-serif" font-size="13">Pemesanan dan pembatalan mengikuti batas waktu yang ditetapkan sistem.</text>
+</svg>
